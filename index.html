@@ -156,6 +156,115 @@ async function loadAnalytics(){
     .stock-low{background:#fff7ed;color:#9a3412;border-radius:999px;padding:4px 8px;font-size:.82rem;font-weight:800;display:inline-block}
 
   </style>
+
+
+  <style>
+    /* Categorías con imagen ocupando todo el ancho superior de la tarjeta */
+    .category-grid{
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important;
+    }
+    .category-card{
+      text-align:center;
+      cursor:pointer;
+      padding:0!important;
+      overflow:hidden!important;
+    }
+    .category-card h3{
+      margin-top:0;
+      padding:0 16px;
+      font-size:1.15rem;
+    }
+    .category-card p{
+      padding:0 16px 18px;
+      font-size:.95rem;
+      color:#4b5563;
+    }
+    .category-icon{
+      width:100%!important;
+      height:155px!important;
+      margin:0 0 14px!important;
+      border-radius:18px 18px 0 0!important;
+      background:#eef2f7!important;
+      box-shadow:none!important;
+      border:none!important;
+      color:var(--primary)!important;
+      font-size:5.2rem!important;
+      display:grid!important;
+      place-items:center!important;
+      overflow:hidden!important;
+    }
+    .category-icon img{
+      width:100%!important;
+      height:100%!important;
+      object-fit:cover!important;
+      border-radius:0!important;
+      display:block!important;
+    }
+    .whatsapp-float{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:62px;
+      height:62px;
+      border-radius:50%;
+      background:#25D366;
+      color:white;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      font-size:2rem;
+      font-weight:900;
+      box-shadow:0 12px 30px #0004;
+      z-index:2600;
+      transition:.2s;
+    }
+    .whatsapp-float:hover{
+      transform:translateY(-3px) scale(1.04);
+      filter:brightness(1.03);
+    }
+    .whatsapp-float.show{display:flex}
+    .notification{bottom:96px}
+    @media(max-width:650px){
+      .whatsapp-float{right:16px;bottom:16px;width:58px;height:58px}
+      .notification{right:16px;bottom:88px}
+      .category-icon{width:100%!important;height:125px!important;font-size:4.2rem!important}
+    }
+  </style>
+
+
+
+  <style>
+    /* Ajustes de color solicitados */
+    nav{
+      background:var(--dark)!important;
+    }
+    .nav-links a:hover,
+    .nav-links a.active{
+      background:white!important;
+      color:var(--dark)!important;
+    }
+    .cart-icon{
+      background:#FFC107!important;
+      color:#0D47A1!important;
+      font-weight:900;
+      box-shadow:0 8px 20px #0002;
+    }
+    .cart-count{
+      background:#dc2626!important;
+      color:white!important;
+    }
+    .hero-content .btn.green{
+      background:#FFC107!important;
+      color:#0D47A1!important;
+      box-shadow:0 10px 24px #0003;
+    }
+    .promo-card .btn.green{
+      background:#dc2626!important;
+      color:white!important;
+    }
+  </style>
+
 </head>
 <body>
 <header>
@@ -178,17 +287,19 @@ async function loadAnalytics(){
 <section class="section features"><div class="container"><div class="grid features-grid"><div><div class="feature-icon">🚚</div><h3>Envío rápido</h3><p id="envioFeatureText">Entrega según zona</p></div><div><div class="feature-icon">🔒</div><h3>Pago seguro</h3><p>Pedido por WhatsApp</p></div><div><div class="feature-icon">💬</div><h3>Atención</h3><p>Asesoría personalizada</p></div></div></div></section>
 <footer><div class="container"><p id="footerText"></p><div class="footer-links" id="footerLinks"></div><p class="muted" id="footerEnvioText" style="color:#d1d5db"></p><div class="admin-footer-area"><button class="btn green admin-toggle" onclick="openAdmin()" title="Admin" aria-label="Admin">⚙️</button></div></div></footer>
 <section class="section admin-panel" id="adminPanel"><div class="container"><h2 class="section-title">Panel Admin</h2><div id="loginBox" class="admin-card"><h3>Entrar con Supabase Auth</h3><p class="muted">Crea tu usuario en Supabase > Authentication > Users.</p><div class="form-grid"><input id="adminEmail" type="email" placeholder="Correo admin"><input id="adminPass" type="password" placeholder="Contraseña"></div><br><button class="btn green" onclick="adminLogin()">Entrar</button></div><div id="adminContent" class="admin-grid hidden"><div class="admin-menu"><button class="btn green" onclick="showAdminTab('productosAdmin')">Productos</button><button class="btn" onclick="showAdminTab('analyticsAdmin')">Análisis</button><button class="btn" onclick="showAdminTab('categoriasAdmin')">Categorías</button><button class="btn" onclick="showAdminTab('promosAdmin')">Promociones</button><button class="btn" onclick="showAdminTab('configAdmin')">Configuración</button><button class="btn" onclick="showAdminTab('pedidosAdmin')">Pedidos</button><button class="btn danger" onclick="adminLogout()">Salir</button></div><div>
-<div class="admin-section active" id="productosAdmin"><div class="admin-card"><h3 id="productFormTitle">Agregar producto</h3><input type="hidden" id="productId"><div class="form-grid"><input id="pNombre" placeholder="Nombre"><select id="pCategoria"></select><input id="pPrecio" type="number" step="0.01" placeholder="Precio USD"><input id="pOriginal" type="number" step="0.01" placeholder="Precio original"><input id="pStock" type="number" placeholder="Stock"><input id="pBadge" placeholder="Etiqueta: Oferta, Nuevo..."><select id="pActivo"><option value="true">Activo</option><option value="false">Oculto</option></select><select id="pOferta"><option value="false">Normal</option><option value="true">Oferta</option></select></div><br><textarea id="pDescripcion" rows="3" placeholder="Descripción"></textarea><div class="spec-admin-box"><div class="spec-admin-head"><b>Especificaciones</b><button class="btn light" type="button" onclick="addSpecRow()">+ Agregar especificación</button></div><div class="spec-admin-list" id="pSpecsList"></div><p class="muted" style="margin-top:8px">Sin corchetes ni JSON. Ejemplo: en la izquierda escribes <b>Potencia</b> y en la derecha <b>750W</b>.</p></div><input id="pImagenes" type="file" multiple accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearProductImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes subir hasta 3 imágenes por producto. Para eliminar una imagen ya guardada, toca la X roja en la vista previa y luego guarda el producto.</p><div class="admin-preview-images" id="pImagenesPreview"></div><br><button class="btn green" onclick="saveProduct()">Guardar producto</button><button class="btn gray" onclick="clearProductForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Producto</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="adminProductsTable"></tbody></table></div></div>
+<div class="admin-section active" id="productosAdmin"><div class="admin-card"><h3 id="productFormTitle">Agregar producto</h3><input type="hidden" id="productId"><div class="form-grid"><input id="pNombre" placeholder="Nombre"><select id="pCategoria"></select><input id="pPrecio" type="number" step="0.01" placeholder="Precio USD"><input id="pOriginal" type="number" step="0.01" placeholder="Precio original"><input id="pStock" type="number" step="0.01" placeholder="Stock"><input id="pBadge" placeholder="Etiqueta: Oferta, Nuevo..."><select id="pActivo"><option value="true">Activo</option><option value="false">Oculto</option></select><select id="pOferta"><option value="false">Normal</option><option value="true">Oferta</option></select></div><br><textarea id="pDescripcion" rows="3" placeholder="Descripción"></textarea><div class="spec-admin-box"><div class="spec-admin-head"><b>Especificaciones</b><button class="btn light" type="button" onclick="addSpecRow()">+ Agregar especificación</button></div><div class="spec-admin-list" id="pSpecsList"></div><p class="muted" style="margin-top:8px">Sin corchetes ni JSON. Ejemplo: en la izquierda escribes <b>Potencia</b> y en la derecha <b>750W</b>.</p></div><input id="pImagenes" type="file" multiple accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearProductImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes subir hasta 3 imágenes por producto. Para eliminar una imagen ya guardada, toca la X roja en la vista previa y luego guarda el producto.</p><div class="admin-preview-images" id="pImagenesPreview"></div><br><button class="btn green" onclick="saveProduct()">Guardar producto</button><button class="btn gray" onclick="clearProductForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Producto</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="adminProductsTable"></tbody></table></div></div>
 <div class="admin-section" id="categoriasAdmin"><div class="admin-card"><h3 id="categoryFormTitle">Agregar categoría</h3><input type="hidden" id="cId"><div class="form-grid"><input id="cNombre" placeholder="Nombre"><input id="cSlug" placeholder="slug sin espacios"><input id="cIcono" placeholder="Emoji opcional"><input id="cOrden" type="number" placeholder="Orden"></div><br><label><b>Imagen de la categoría</b></label><input id="cImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearCategoryImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes usar una imagen en vez del icono. Para eliminar una imagen guardada, toca la X roja y guarda la categoría.</p><div class="admin-preview-images" id="cImagenPreview"></div><br><textarea id="cDesc" placeholder="Descripción"></textarea><br><br><button class="btn green" onclick="saveCategory()">Guardar categoría</button><button class="btn gray" onclick="clearCategoryForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen/Icono</th><th>Categoría</th><th>Slug</th><th>Acción</th></tr></thead><tbody id="adminCategoriesTable"></tbody></table></div></div>
 <div class="admin-section" id="promosAdmin"><div class="admin-card"><h3 id="promoFormTitle">Agregar promoción</h3><input type="hidden" id="promoId"><div class="form-grid"><input id="promoTitulo" placeholder="Título"><input id="promoBoton" placeholder="Texto botón"><input id="promoOrden" type="number" placeholder="Orden"><select id="promoActivo"><option value="true">Activa</option><option value="false">Oculta</option></select></div><br><textarea id="promoDesc" placeholder="Descripción"></textarea><br><br><label><b>Imagen de promoción</b></label><input id="promoImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearPromoImageInput()">Limpiar selección nueva</button></div><div class="admin-preview-images" id="promoImagenPreview"></div><br><button class="btn green" onclick="savePromo()">Guardar promoción</button><button class="btn gray" onclick="clearPromoForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Promo</th><th>Acción</th></tr></thead><tbody id="adminPromosTable"></tbody></table></div></div>
 <div class="admin-section" id="configAdmin"><div class="admin-card"><h3>Configuración de tienda</h3><div class="form-grid"><input id="cfgNombre" placeholder="Nombre tienda"><input id="cfgSlogan" placeholder="Título principal"><input id="cfgWhatsapp" placeholder="WhatsApp con código país"><input id="cfgInstagram" placeholder="Instagram. Ej: @ferreteria_calimioyo"><input id="cfgTasa" type="number" step="0.01" placeholder="Tasa Bs"><input id="cfgEnvio" type="number" step="0.01" placeholder="Envío gratis desde USD"></div><br><textarea id="cfgDesc" rows="3" placeholder="Texto del hero"></textarea><br><br><div class="image-admin-line"><label>Logo 1</label><input id="cfgLogo1" type="file" accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgLogo1')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgLogo1Preview"></div><div class="image-admin-line"><label>Logo 2</label><input id="cfgLogo2" type="file" accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgLogo2')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgLogo2Preview"></div><div class="image-admin-line"><label>Slide hero</label><input id="cfgHero" type="file" multiple accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgHero')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgHeroPreview"></div><p class="admin-image-note">Para eliminar logos o imágenes del slide, toca la X roja y guarda la configuración.</p><br><textarea id="cfgFooter" placeholder="Texto footer"></textarea><br><br><button class="btn green" onclick="saveConfig()">Guardar configuración</button></div></div>
 <div class="admin-section" id="pedidosAdmin"><div class="admin-card"><h3>Pedidos recibidos</h3><button class="btn" onclick="loadOrders()">Actualizar pedidos</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="ordersTable"></tbody></table></div></div>
-<div class="admin-section" id="analyticsAdmin"><div class="admin-card"><h3>📊 Análisis de ventas</h3><p class="muted">Resumen profesional calculado con pedidos aprobados y entregados.</p><br><button class="btn green" onclick="loadAnalytics()">Actualizar análisis</button></div><div id="analyticsContent"></div></div>
+<div class="admin-section" id="analyticsAdmin"><div class="admin-card"><h3>📊 Análisis de ventas</h3><p class="muted">Resumen profesional calculado con pedidos aprobados y entregados.</p><br><button class="btn green" onclick="loadAnalytics()">Actualizar análisis</button> <button class="btn gray" onclick="clearAnalyticsView()">Limpiar análisis</button></div><div id="analyticsContent"></div></div>
 </div></div></div></section>
 
 <div class="overlay" id="overlay" onclick="toggleCart()"></div><aside class="cart-sidebar" id="cartSidebar"><div class="cart-header"><h2>Tu carrito</h2><button class="btn danger" onclick="toggleCart()">✕</button></div><div class="cart-items" id="cartItems"></div><div class="cart-footer"><div id="cartEnvioInfo" class="envio-banner hidden"></div><div class="cart-total"><span>Total</span><span id="cartTotal">$0.00</span></div><button class="btn green" style="width:100%" onclick="openCheckout()">Finalizar compra</button></div></aside>
 <div class="modal" id="productModal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle"></h3><button class="btn danger" onclick="closeModal('productModal')">✕</button></div><div class="modal-body" id="productModalBody"></div></div></div>
 <div class="modal" id="checkoutModal"><div class="modal-box" style="max-width:560px"><div class="modal-head"><h3>Finalizar compra</h3><button class="btn danger" onclick="closeModal('checkoutModal')">✕</button></div><div class="modal-body"><input id="clienteNombre" placeholder="Nombre completo"><br><br><input id="clienteTelefono" placeholder="Teléfono"><br><br><textarea id="clienteDireccion" placeholder="Dirección / nota del pedido"></textarea><br><br><button class="btn green" style="width:100%" onclick="checkout()">Enviar pedido</button></div></div></div>
+
+<a class="whatsapp-float" id="whatsappFloat" href="#" target="_blank" rel="noopener" title="Escríbenos por WhatsApp" aria-label="Escríbenos por WhatsApp">☎</a>
 <div class="notification" id="notification"></div>
 
 <script>
@@ -237,6 +348,16 @@ function setCartItemQty(id, value){
   renderCart();
 }
 
+
+function updateWhatsappFloat(){
+  const btn=$('whatsappFloat');
+  if(!btn)return;
+  const wa=String(config.whatsapp||'').replace(/\D/g,'');
+  if(!wa){ btn.classList.remove('show'); btn.href='#'; return; }
+  const msg=encodeURIComponent(`Hola, vengo de la tienda ${config.nombre_tienda || 'CALIMIOYO'} y quiero información.`);
+  btn.href=`https://wa.me/${wa}?text=${msg}`;
+  btn.classList.add('show');
+}
 function normalizeInstagram(value){
   const raw=String(value||'').trim();
   if(!raw)return '';
@@ -336,6 +457,7 @@ function applyConfig(){
   $('footerLinks').innerHTML=links.join('');
   $('footerEnvioText').textContent=textoEnvioGeneral();
   $('envioFeatureText').textContent=textoEnvioGeneral();
+  updateWhatsappFloat();
   if(config.logo_1){$('logo1').src=config.logo_1; $('logo1').style.display='block';}else $('logo1').style.display='none';
   if(config.logo_2){$('logo2').src=config.logo_2; $('logo2').style.display='block';}else $('logo2').style.display='none';
   const imgs=config.hero_imagenes?.length?config.hero_imagenes:['https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop'];
@@ -490,6 +612,20 @@ function showAdminLogged(){ $('loginBox').classList.add('hidden'); $('adminConte
 async function adminLogout(){ await supa.auth.signOut(); $('loginBox').classList.remove('hidden'); $('adminContent').classList.add('hidden'); }
 function showAdminTab(id){ document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); if(id==='analyticsAdmin') loadAnalytics(); if(id==='pedidosAdmin') loadOrders(); }
 async function uploadFiles(inputId){ const files=[...$(inputId).files]; const urls=[]; for(const file of files){ const path=`${Date.now()}-${file.name.replace(/\s+/g,'-')}`; const {error}=await supa.storage.from(STORAGE_BUCKET).upload(path,file,{upsert:true}); if(error){notify(error.message);continue;} const {data}=supa.storage.from(STORAGE_BUCKET).getPublicUrl(path); urls.push(data.publicUrl); } return urls; }
+function storagePathFromPublicUrl(url){
+  const value=String(url||'');
+  const marker=`/storage/v1/object/public/${STORAGE_BUCKET}/`;
+  const index=value.indexOf(marker);
+  if(index===-1) return null;
+  return decodeURIComponent(value.slice(index+marker.length).split('?')[0]);
+}
+async function deleteStorageUrls(urls){
+  const list=Array.isArray(urls)?urls:[urls];
+  const paths=[...new Set(list.map(storagePathFromPublicUrl).filter(Boolean))];
+  if(!paths.length) return;
+  const {error}=await supa.storage.from(STORAGE_BUCKET).remove(paths);
+  if(error) notify('No se pudo borrar una imagen de Storage: '+error.message);
+}
 function fillAdminSelects(){ $('pCategoria').innerHTML=categories.map(c=>`<option value="${c.slug}">${c.nombre}</option>`).join(''); }
 function renderAdminTables(){
   $('adminProductsTable').innerHTML=products.map(p=>`<tr><td><div style="display:flex;gap:4px;flex-wrap:wrap">${productImages(p).map(u=>imgHtml(u,'preview-img')).join('')}</div><span class="muted">${productImages(p).filter(u=>String(u).startsWith('http')).length}/3 imágenes</span></td><td><b>${p.nombre}</b><br><span class="muted">${p.categoria}</span></td><td>${money(p.precio)}</td><td>${p.stock}</td><td><button class="btn" onclick="editProduct('${p.id}')">Editar</button> <button class="btn danger" onclick="deleteProduct('${p.id}')">Borrar</button></td></tr>`).join('');
@@ -499,18 +635,99 @@ function renderAdminTables(){
 }
 function clearProductForm(){ ['productId','pNombre','pPrecio','pOriginal','pStock','pBadge','pDescripcion'].forEach(id=>$(id).value=''); productoImagenesActuales=[]; setSpecsForm({}); $('pActivo').value='true'; $('pOferta').value='false'; $('pImagenes').value=''; renderProductImagePreview(); $('productFormTitle').textContent='Agregar producto'; }
 function editProduct(id){ const p=products.find(x=>String(x.id)===String(id)); if(!p)return; $('productId').value=p.id; $('pNombre').value=p.nombre||''; $('pCategoria').value=p.categoria||''; $('pPrecio').value=p.precio||0; $('pOriginal').value=p.precio_original||''; $('pStock').value=p.stock||0; $('pBadge').value=p.badge||''; $('pDescripcion').value=p.descripcion||''; setSpecsForm(p.especificaciones||{}); $('pActivo').value=String(p.activo); $('pOferta').value=String(p.oferta); $('pImagenes').value=''; productoImagenesActuales=(Array.isArray(p.imagenes)?p.imagenes.filter(Boolean):[]).slice(0,3); renderProductImagePreview(); $('productFormTitle').textContent='Editar producto'; showAdminTab('productosAdmin'); }
-async function saveProduct(){ const specs=getSpecsFromForm(); const nuevos=[...$('pImagenes').files]; if(productoImagenesActuales.length+nuevos.length>3) return notify('Solo puedes dejar máximo 3 imágenes por producto'); const imgs=(await uploadFiles('pImagenes')).slice(0,3); const finalImages=[...productoImagenesActuales,...imgs].filter(Boolean).slice(0,3); const id=$('productId').value; const row={nombre:$('pNombre').value,categoria:$('pCategoria').value,precio:Number($('pPrecio').value||0),precio_original:$('pOriginal').value?Number($('pOriginal').value):null,stock:Number($('pStock').value||0),badge:$('pBadge').value||null,descripcion:$('pDescripcion').value,especificaciones:specs,activo:$('pActivo').value==='true',oferta:$('pOferta').value==='true',imagenes:finalImages,updated_at:new Date().toISOString()}; const res=id?await supa.from('productos').update(row).eq('id',id):await supa.from('productos').insert(row); if(res.error)return notify(res.error.message); clearProductForm(); await loadAll(); notify('Producto guardado'); }
-async function deleteProduct(id){ if(!confirm('¿Borrar producto?'))return; await supa.from('productos').delete().eq('id',id); await loadAll(); }
+async function saveProduct(){
+  const specs=getSpecsFromForm();
+  const nuevos=[...$('pImagenes').files];
+  if(productoImagenesActuales.length+nuevos.length>3) return notify('Solo puedes dejar máximo 3 imágenes por producto');
+  const id=$('productId').value;
+  const anterior=id?products.find(x=>String(x.id)===String(id)):null;
+  const imagenesAntes=anterior&&Array.isArray(anterior.imagenes)?anterior.imagenes.filter(Boolean):[];
+  const imgs=(await uploadFiles('pImagenes')).slice(0,3);
+  const finalImages=[...productoImagenesActuales,...imgs].filter(Boolean).slice(0,3);
+  const row={nombre:$('pNombre').value,categoria:$('pCategoria').value,precio:Number($('pPrecio').value||0),precio_original:$('pOriginal').value?Number($('pOriginal').value):null,stock:Number($('pStock').value||0),badge:$('pBadge').value||null,descripcion:$('pDescripcion').value,especificaciones:specs,activo:$('pActivo').value==='true',oferta:$('pOferta').value==='true',imagenes:finalImages,updated_at:new Date().toISOString()};
+  const res=id?await supa.from('productos').update(row).eq('id',id):await supa.from('productos').insert(row);
+  if(res.error){ await deleteStorageUrls(imgs); return notify(res.error.message); }
+  const borradas=imagenesAntes.filter(u=>!finalImages.includes(u));
+  await deleteStorageUrls(borradas);
+  clearProductForm();
+  await loadAll();
+  notify('Producto guardado');
+}
+async function deleteProduct(id){
+  if(!confirm('¿Borrar producto? También se borrarán sus imágenes de Supabase Storage.'))return;
+  const p=products.find(x=>String(x.id)===String(id));
+  const {error}=await supa.from('productos').delete().eq('id',id);
+  if(error) return notify(error.message);
+  await deleteStorageUrls(Array.isArray(p?.imagenes)?p.imagenes:[]);
+  await loadAll();
+  notify('Producto borrado');
+}
 function clearCategoryForm(){ ['cId','cNombre','cSlug','cIcono','cDesc','cOrden'].forEach(id=>$(id).value=''); $('cImagen').value=''; categoriaImagenActual=null; renderCategoryImagePreview(); $('categoryFormTitle').textContent='Agregar categoría'; }
 function editCategory(id){ const c=categories.find(x=>String(x.id)===String(id)); if(!c)return; $('cId').value=c.id; $('cNombre').value=c.nombre||''; $('cSlug').value=c.slug||''; $('cIcono').value=c.icono||''; $('cDesc').value=c.descripcion||''; $('cOrden').value=c.orden||0; $('cImagen').value=''; categoriaImagenActual=c.imagen||null; renderCategoryImagePreview(); $('categoryFormTitle').textContent='Editar categoría'; showAdminTab('categoriasAdmin'); }
-async function saveCategory(){ const imgs=await uploadFiles('cImagen'); const row={nombre:$('cNombre').value,slug:$('cSlug').value||$('cNombre').value.toLowerCase().trim().replaceAll(' ','-'),icono:$('cIcono').value||'🛠️',imagen:imgs[0]||categoriaImagenActual||null,descripcion:$('cDesc').value,orden:Number($('cOrden').value||0),activo:true}; const id=$('cId').value; const res=id?await supa.from('categorias').update(row).eq('id',id):await supa.from('categorias').insert(row); if(res.error)return notify(res.error.message); clearCategoryForm(); await loadAll(); notify('Categoría guardada'); }
-async function deleteCategory(id){ if(!confirm('¿Borrar categoría?'))return; await supa.from('categorias').delete().eq('id',id); await loadAll(); }
+async function saveCategory(){
+  const id=$('cId').value;
+  const anterior=id?categories.find(x=>String(x.id)===String(id)):null;
+  const imagenAntes=anterior?.imagen||null;
+  const imgs=await uploadFiles('cImagen');
+  const imagenFinal=imgs[0]||categoriaImagenActual||null;
+  const row={nombre:$('cNombre').value,slug:$('cSlug').value||$('cNombre').value.toLowerCase().trim().replaceAll(' ','-'),icono:$('cIcono').value||'🛠️',imagen:imagenFinal,descripcion:$('cDesc').value,orden:Number($('cOrden').value||0),activo:true};
+  const res=id?await supa.from('categorias').update(row).eq('id',id):await supa.from('categorias').insert(row);
+  if(res.error){ await deleteStorageUrls(imgs); return notify(res.error.message); }
+  if(imagenAntes && imagenAntes!==imagenFinal) await deleteStorageUrls(imagenAntes);
+  clearCategoryForm();
+  await loadAll();
+  notify('Categoría guardada');
+}
+async function deleteCategory(id){
+  if(!confirm('¿Borrar categoría? También se borrará su imagen de Supabase Storage.'))return;
+  const c=categories.find(x=>String(x.id)===String(id));
+  const {error}=await supa.from('categorias').delete().eq('id',id);
+  if(error) return notify(error.message);
+  await deleteStorageUrls(c?.imagen||null);
+  await loadAll();
+  notify('Categoría borrada');
+}
 function clearPromoForm(){ ['promoId','promoTitulo','promoDesc','promoBoton','promoOrden'].forEach(id=>$(id).value=''); $('promoActivo').value='true'; $('promoImagen').value=''; promoImagenActual=null; renderPromoImagePreview(); $('promoFormTitle').textContent='Agregar promoción'; }
 function editPromo(id){ const p=promos.find(x=>String(x.id)===String(id)); if(!p)return; $('promoId').value=p.id; $('promoTitulo').value=p.titulo||''; $('promoDesc').value=p.descripcion||''; $('promoBoton').value=p.boton_texto||''; $('promoOrden').value=p.orden||0; $('promoActivo').value=String(p.activo); $('promoImagen').value=''; promoImagenActual=p.imagen||null; renderPromoImagePreview(); $('promoFormTitle').textContent='Editar promoción'; showAdminTab('promosAdmin'); }
-async function savePromo(){ const imgs=await uploadFiles('promoImagen'); const row={titulo:$('promoTitulo').value,descripcion:$('promoDesc').value,boton_texto:$('promoBoton').value||'Ver promoción',orden:Number($('promoOrden').value||0),activo:$('promoActivo').value==='true',imagen:imgs[0]||promoImagenActual||null}; const id=$('promoId').value; const res=id?await supa.from('promociones').update(row).eq('id',id):await supa.from('promociones').insert(row); if(res.error)return notify(res.error.message); clearPromoForm(); await loadAll(); notify('Promoción guardada'); }
-async function deletePromo(id){ if(!confirm('¿Borrar promoción?'))return; await supa.from('promociones').delete().eq('id',id); await loadAll(); }
+async function savePromo(){
+  const id=$('promoId').value;
+  const anterior=id?promos.find(x=>String(x.id)===String(id)):null;
+  const imagenAntes=anterior?.imagen||null;
+  const imgs=await uploadFiles('promoImagen');
+  const imagenFinal=imgs[0]||promoImagenActual||null;
+  const row={titulo:$('promoTitulo').value,descripcion:$('promoDesc').value,boton_texto:$('promoBoton').value||'Ver promoción',orden:Number($('promoOrden').value||0),activo:$('promoActivo').value==='true',imagen:imagenFinal};
+  const res=id?await supa.from('promociones').update(row).eq('id',id):await supa.from('promociones').insert(row);
+  if(res.error){ await deleteStorageUrls(imgs); return notify(res.error.message); }
+  if(imagenAntes && imagenAntes!==imagenFinal) await deleteStorageUrls(imagenAntes);
+  clearPromoForm();
+  await loadAll();
+  notify('Promoción guardada');
+}
+async function deletePromo(id){
+  if(!confirm('¿Borrar promoción? También se borrará su imagen de Supabase Storage.'))return;
+  const p=promos.find(x=>String(x.id)===String(id));
+  const {error}=await supa.from('promociones').delete().eq('id',id);
+  if(error) return notify(error.message);
+  await deleteStorageUrls(p?.imagen||null);
+  await loadAll();
+  notify('Promoción borrada');
+}
 function fillConfigForm(){ $('cfgNombre').value=config.nombre_tienda||''; $('cfgSlogan').value=config.slogan||''; $('cfgDesc').value=config.descripcion_hero||''; $('cfgWhatsapp').value=config.whatsapp||''; $('cfgInstagram').value=config.instagram||''; $('cfgTasa').value=config.tasa||''; $('cfgEnvio').value=config.envio_gratis_desde||''; $('cfgFooter').value=config.footer_text||''; cfgLogo1Actual=config.logo_1||null; cfgLogo2Actual=config.logo_2||null; cfgHeroActual=(Array.isArray(config.hero_imagenes)?config.hero_imagenes.filter(Boolean):[]); renderConfigPreviews(); }
-async function saveConfig(){ const logo1=await uploadFiles('cfgLogo1'), logo2=await uploadFiles('cfgLogo2'), hero=await uploadFiles('cfgHero'); const row={id:1,nombre_tienda:$('cfgNombre').value,slogan:$('cfgSlogan').value,descripcion_hero:$('cfgDesc').value,whatsapp:$('cfgWhatsapp').value,instagram:$('cfgInstagram').value,tasa:Number($('cfgTasa').value||36.5),envio_gratis_desde:Number($('cfgEnvio').value||0),footer_text:$('cfgFooter').value,logo_1:logo1[0]||cfgLogo1Actual||null,logo_2:logo2[0]||cfgLogo2Actual||null,hero_imagenes:hero.length?hero:cfgHeroActual,updated_at:new Date().toISOString()}; const {error}=await supa.from('tienda_config').upsert(row); if(error)return notify(error.message); ['cfgLogo1','cfgLogo2','cfgHero'].forEach(id=>$(id).value=''); await loadAll(); notify('Configuración guardada'); }
+async function saveConfig(){
+  const anteriores=[config.logo_1,config.logo_2,...(Array.isArray(config.hero_imagenes)?config.hero_imagenes.filter(Boolean):[])].filter(Boolean);
+  const logo1=await uploadFiles('cfgLogo1'), logo2=await uploadFiles('cfgLogo2'), hero=await uploadFiles('cfgHero');
+  const logo1Final=logo1[0]||cfgLogo1Actual||null;
+  const logo2Final=logo2[0]||cfgLogo2Actual||null;
+  const heroFinal=hero.length?hero:cfgHeroActual;
+  const finales=[logo1Final,logo2Final,...(Array.isArray(heroFinal)?heroFinal:[])].filter(Boolean);
+  const row={id:1,nombre_tienda:$('cfgNombre').value,slogan:$('cfgSlogan').value,descripcion_hero:$('cfgDesc').value,whatsapp:$('cfgWhatsapp').value,instagram:$('cfgInstagram').value,tasa:Number($('cfgTasa').value||36.5),envio_gratis_desde:Number($('cfgEnvio').value||0),footer_text:$('cfgFooter').value,logo_1:logo1Final,logo_2:logo2Final,hero_imagenes:heroFinal,updated_at:new Date().toISOString()};
+  const {error}=await supa.from('tienda_config').upsert(row);
+  if(error){ await deleteStorageUrls([...logo1,...logo2,...hero]); return notify(error.message); }
+  await deleteStorageUrls(anteriores.filter(u=>!finales.includes(u)));
+  ['cfgLogo1','cfgLogo2','cfgHero'].forEach(id=>$(id).value='');
+  await loadAll();
+  notify('Configuración guardada');
+}
 function estadoBadge(estado){
   const e = estado || 'pendiente';
   const color = e === 'aprobado' ? '#16a34a' : e === 'rechazado' ? '#dc2626' : e === 'entregado' ? '#2563eb' : '#f59e0b';
@@ -624,6 +841,13 @@ async function loadAnalytics(){
     </div>`;
 }
 
+
+function clearAnalyticsView(){
+  const box=$('analyticsContent');
+  if(!box) return;
+  box.innerHTML='<div class="admin-card"><b>Análisis limpiado.</b><p class="muted">Esto solo limpia la vista. Para volver a calcular, toca Actualizar análisis.</p></div>';
+  notify('Análisis limpiado');
+}
 </script>
 </body>
 </html>
