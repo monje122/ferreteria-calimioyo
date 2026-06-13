@@ -269,8 +269,38 @@ async function loadAnalytics(){
       object-fit:contain!important;
       display:block!important;
     }
+    .instagram-float{
+      position:fixed;
+      right:22px;
+      bottom:94px;
+      width:62px;
+      height:62px;
+      border-radius:50%;
+      background:transparent!important;
+      color:white;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      overflow:hidden!important;
+      box-shadow:none!important;
+      z-index:2601;
+      transition:.2s;
+    }
+    .instagram-float:hover{
+      transform:translateY(-3px) scale(1.04);
+      filter:brightness(1.03);
+    }
+    .instagram-float.show{display:flex}
+    .instagram-float img{
+      width:100%!important;
+      height:100%!important;
+      object-fit:contain!important;
+      display:block!important;
+    }
     @media(max-width:650px){
       .main-header-logo{height:58px!important;max-width:140px!important}
+      .instagram-float{right:16px;bottom:86px;width:58px;height:58px}
     }
   </style>
 
@@ -500,6 +530,21 @@ async function loadAnalytics(){
     @keyframes loaderSpin{to{transform:rotate(360deg)}}
   </style>
 
+  <style>
+    /* Aviso de búsqueda en productos */
+    .search-result-notice{
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#9a3412;
+      border-radius:14px;
+      padding:11px 14px;
+      margin:-8px 0 20px;
+      font-weight:800;
+      text-align:center;
+      box-shadow:0 6px 18px #0001;
+    }
+  </style>
+
 </head>
 <body>
 <div class="page-loader" id="pageLoader">
@@ -535,7 +580,7 @@ async function loadAnalytics(){
 <section class="hero" id="inicio"><div class="slider" id="heroSlider"></div><div class="container hero-content"><h1 id="heroTitle">Construye tus sueños</h1><p id="heroDesc">Productos para profesionales y hogar.</p><a href="#productos" class="btn green">Ver catálogo</a></div></section>
 <section class="section white"><div class="container"><h2 class="section-title">Categorías</h2><div class="grid category-grid" id="categoryGrid"></div></div></section>
 <section class="section" id="promociones"><div class="container"><h2 class="section-title">Promociones</h2><div class="grid products-grid" id="promoGrid"></div></div></section>
-<section class="section" id="productos"><div class="container"><h2 class="section-title">Productos</h2><div class="filter-tabs" id="filterTabs"><button class="filter-btn active" onclick="filterProducts('todos')">Todos</button><button class="filter-btn" onclick="filterProducts('ofertas')">Ofertas</button></div><div class="grid products-grid" id="productsGrid"></div></div></section>
+<section class="section" id="productos"><div class="container"><h2 class="section-title">Productos</h2><div class="filter-tabs" id="filterTabs"><button class="filter-btn active" onclick="filterProducts('todos')">Todos</button><button class="filter-btn" onclick="filterProducts('ofertas')">Ofertas</button></div><div id="searchResultNotice" class="search-result-notice hidden"></div><div class="grid products-grid" id="productsGrid"></div></div></section>
 <section class="section features"><div class="container"><div class="grid features-grid"><div><div class="feature-icon">🚚</div><h3>Envío rápido</h3><p id="envioFeatureText">Entrega según zona</p></div><div><div class="feature-icon">🔒</div><h3>Pago seguro</h3><p>Pedido por WhatsApp</p></div><div><div class="feature-icon">💬</div><h3>Atención</h3><p>Asesoría personalizada</p></div></div></div></section>
 <footer><div class="container"><p id="footerText"></p><div class="footer-links" id="footerLinks"></div><p class="muted" id="footerEnvioText" style="color:#d1d5db"></p><div class="admin-footer-area"><button class="btn green admin-toggle" onclick="openAdmin()" title="Admin" aria-label="Admin">⚙️</button></div></div></footer>
 
@@ -544,6 +589,7 @@ async function loadAnalytics(){
 <div class="modal" id="productModal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle"></h3><button class="btn danger" onclick="closeModal('productModal')">✕</button></div><div class="modal-body" id="productModalBody"></div></div></div>
 <div class="modal" id="checkoutModal"><div class="modal-box" style="max-width:560px"><div class="modal-head"><h3>Finalizar compra</h3><button class="btn danger" onclick="closeModal('checkoutModal')">✕</button></div><div class="modal-body"><input id="clienteNombre" placeholder="Nombre completo"><br><br><input id="clienteTelefono" placeholder="Teléfono"><br><br><textarea id="clienteDireccion" placeholder="Dirección / nota del pedido"></textarea><br><br><button class="btn green" style="width:100%" onclick="checkout()">Enviar pedido</button></div></div></div>
 
+<a class="instagram-float" id="instagramFloat" href="#" target="_blank" rel="noopener" title="Síguenos en Instagram" aria-label="Síguenos en Instagram"><img src="https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/image%20(1).png" alt="Instagram"></a>
 <a class="whatsapp-float" id="whatsappFloat" href="#" target="_blank" rel="noopener" title="Escríbenos por WhatsApp" aria-label="Escríbenos por WhatsApp"><img src="https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/cd68fc97-780b-446f-9f76-a8825dfeada2.png" alt="WhatsApp"></a>
 <div class="notification" id="notification"></div>
 
@@ -557,6 +603,7 @@ const WHATSAPP_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/o
 const INSTAGRAM_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/image%20(1).png';
 let config = {}, categories = [], products = [], promos = [], cart = [], currentCurrency = 'USD', exchangeRate = 36.5, currentFilter = 'todos', slideIndex = 0, currentModalImages = [], favorites = JSON.parse(localStorage.getItem('calimioyo_favoritos') || '[]');
 let adminProductSearchTerm = '', adminProductCategoryFilter = 'todos', adminProductStockFilter = 'todos';
+let mainSearchScrollTimer = null;
 let productoImagenesActuales = [], categoriaImagenActual = null, promoImagenActual = null, cfgLogo1Actual = null, cfgLogo2Actual = null, cfgHeroActual = [], heroIntervalId = null;
 const $ = id => document.getElementById(id);
 function notify(msg){ const n=$('notification'); n.textContent=msg; n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),2600); }
@@ -612,6 +659,14 @@ function updateWhatsappFloat(){
   if(!wa){ btn.classList.remove('show'); btn.href='#'; return; }
   const msg=encodeURIComponent(`Hola, vengo de la tienda ${config.nombre_tienda || 'CALIMIOYO'} y quiero información.`);
   btn.href=`https://wa.me/${wa}?text=${msg}`;
+  btn.classList.add('show');
+}
+function updateInstagramFloat(){
+  const btn=$('instagramFloat');
+  if(!btn)return;
+  const insta=normalizeInstagram(config.instagram);
+  if(!insta){ btn.classList.remove('show'); btn.href='#'; return; }
+  btn.href=insta;
   btn.classList.add('show');
 }
 function normalizeInstagram(value){
@@ -676,6 +731,17 @@ function getSpecsFromForm(){
   });
   return specs;
 }
+function handleMainSearchInput(){
+  renderProducts();
+  const q = $('searchInput')?.value.trim();
+  if(mainSearchScrollTimer) clearTimeout(mainSearchScrollTimer);
+  if(q){
+    mainSearchScrollTimer = setTimeout(()=>{
+      document.querySelector('#productos')?.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 350);
+  }
+}
+
 async function init(){
   try{
     await loadAll();
@@ -683,7 +749,7 @@ async function init(){
     hidePageLoader();
   }
   setSpecsForm({});
-  $('searchInput').addEventListener('input',()=>renderProducts());
+  $('searchInput').addEventListener('input', handleMainSearchInput);
   $('adminProductSearch')?.addEventListener('input',e=>{ adminProductSearchTerm=e.target.value.trim().toLowerCase(); renderAdminProductsTable(); });
   $('adminProductCategoryFilter')?.addEventListener('change',e=>{ adminProductCategoryFilter=e.target.value; renderAdminProductsTable(); });
   $('adminProductStockFilter')?.addEventListener('change',e=>{ adminProductStockFilter=e.target.value; renderAdminProductsTable(); });
@@ -746,6 +812,7 @@ function applyConfig(){
   $('footerEnvioText').textContent=textoEnvioGeneral();
   $('envioFeatureText').textContent=textoEnvioGeneral();
   updateWhatsappFloat();
+  updateInstagramFloat();
   const imgs=config.hero_imagenes?.length?config.hero_imagenes:['https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop'];
   $('heroSlider').innerHTML=imgs.map((u,i)=>`<img class="slide ${i===0?'active':''}" src="${u}">`).join('');
   if(heroIntervalId) clearInterval(heroIntervalId);
@@ -824,6 +891,17 @@ function productVisible(p){
 function renderProducts(){
   renderFilterTabs();
   const list=products.filter(productVisible);
+  const q=$('searchInput')?.value.trim();
+  const notice=$('searchResultNotice');
+  if(notice){
+    if(q){
+      notice.classList.remove('hidden');
+      notice.textContent = list.length ? `🔎 ${list.length} producto(s) encontrado(s) para: ${q}` : `No se encontraron productos para: ${q}`;
+    }else{
+      notice.classList.add('hidden');
+      notice.textContent='';
+    }
+  }
   $('productsGrid').innerHTML=list.map(p=>{
     const stock=stockDisponible(p);
     const agotado=stock<=0;
