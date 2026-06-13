@@ -538,10 +538,11 @@ async function loadAnalytics(){
       color:#9a3412;
       border-radius:14px;
       padding:11px 14px;
-      margin:-8px 0 20px;
+      margin:0 0 20px;
       font-weight:800;
       text-align:center;
       box-shadow:0 6px 18px #0001;
+      scroll-margin-top:110px;
     }
   </style>
 
@@ -737,7 +738,8 @@ function handleMainSearchInput(){
   if(mainSearchScrollTimer) clearTimeout(mainSearchScrollTimer);
   if(q){
     mainSearchScrollTimer = setTimeout(()=>{
-      document.querySelector('#productos')?.scrollIntoView({behavior:'smooth', block:'start'});
+      const target = $('searchResultNotice') || $('productsGrid') || $('productos');
+      target?.scrollIntoView({behavior:'smooth', block:'start'});
     }, 350);
   }
 }
