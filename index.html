@@ -604,7 +604,7 @@ const WHATSAPP_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/o
 const INSTAGRAM_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/image%20(1).png';
 let config = {}, categories = [], products = [], promos = [], cart = [], currentCurrency = 'USD', exchangeRate = 36.5, currentFilter = 'todos', slideIndex = 0, currentModalImages = [], favorites = JSON.parse(localStorage.getItem('calimioyo_favoritos') || '[]');
 let adminProductSearchTerm = '', adminProductCategoryFilter = 'todos', adminProductStockFilter = 'todos';
-let mainSearchScrollTimer = null;
+let mainSearchScrollTimer = null, mainSearchRenderTimer = null;
 let productoImagenesActuales = [], categoriaImagenActual = null, promoImagenActual = null, cfgLogo1Actual = null, cfgLogo2Actual = null, cfgHeroActual = [], heroIntervalId = null;
 const $ = id => document.getElementById(id);
 function notify(msg){ const n=$('notification'); n.textContent=msg; n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),2600); }
@@ -733,15 +733,32 @@ function getSpecsFromForm(){
   return specs;
 }
 function handleMainSearchInput(){
-  renderProducts();
   const q = $('searchInput')?.value.trim();
+  const notice = $('searchResultNotice');
+
+  if(mainSearchRenderTimer) clearTimeout(mainSearchRenderTimer);
   if(mainSearchScrollTimer) clearTimeout(mainSearchScrollTimer);
-  if(q){
+
+  // En teléfono, filtrar miles de productos en cada tecla puede sentirse pegado.
+  // Por eso esperamos un poquito hasta que la persona deje de escribir.
+  if(q && notice){
+    notice.classList.remove('hidden');
+    notice.textContent = '🔎 Buscando productos...';
+  }
+
+  if(!q){
+    renderProducts();
+    return;
+  }
+
+  mainSearchRenderTimer = setTimeout(()=>{
+    renderProducts();
     mainSearchScrollTimer = setTimeout(()=>{
       const target = $('searchResultNotice') || $('productsGrid') || $('productos');
-      target?.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 350);
-  }
+      const isMobile = window.matchMedia('(max-width:650px)').matches;
+      target?.scrollIntoView({behavior:isMobile ? 'auto' : 'smooth', block:'start'});
+    }, 80);
+  }, 450);
 }
 
 async function init(){
