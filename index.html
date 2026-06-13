@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ferretería CALIMIOYO - Tienda editable final</title>
+  <title>Ferretería CALIMIOYO - Inventario completo</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 async function loadAnalytics(){
   const box = $('analyticsContent');
@@ -287,7 +287,7 @@ async function loadAnalytics(){
 <section class="section features"><div class="container"><div class="grid features-grid"><div><div class="feature-icon">🚚</div><h3>Envío rápido</h3><p id="envioFeatureText">Entrega según zona</p></div><div><div class="feature-icon">🔒</div><h3>Pago seguro</h3><p>Pedido por WhatsApp</p></div><div><div class="feature-icon">💬</div><h3>Atención</h3><p>Asesoría personalizada</p></div></div></div></section>
 <footer><div class="container"><p id="footerText"></p><div class="footer-links" id="footerLinks"></div><p class="muted" id="footerEnvioText" style="color:#d1d5db"></p><div class="admin-footer-area"><button class="btn green admin-toggle" onclick="openAdmin()" title="Admin" aria-label="Admin">⚙️</button></div></div></footer>
 <section class="section admin-panel" id="adminPanel"><div class="container"><h2 class="section-title">Panel Admin</h2><div id="loginBox" class="admin-card"><h3>Entrar con Supabase Auth</h3><p class="muted">Crea tu usuario en Supabase > Authentication > Users.</p><div class="form-grid"><input id="adminEmail" type="email" placeholder="Correo admin"><input id="adminPass" type="password" placeholder="Contraseña"></div><br><button class="btn green" onclick="adminLogin()">Entrar</button></div><div id="adminContent" class="admin-grid hidden"><div class="admin-menu"><button class="btn green" onclick="showAdminTab('productosAdmin')">Productos</button><button class="btn" onclick="showAdminTab('analyticsAdmin')">Análisis</button><button class="btn" onclick="showAdminTab('categoriasAdmin')">Categorías</button><button class="btn" onclick="showAdminTab('promosAdmin')">Promociones</button><button class="btn" onclick="showAdminTab('configAdmin')">Configuración</button><button class="btn" onclick="showAdminTab('pedidosAdmin')">Pedidos</button><button class="btn danger" onclick="adminLogout()">Salir</button></div><div>
-<div class="admin-section active" id="productosAdmin"><div class="admin-card"><h3 id="productFormTitle">Agregar producto</h3><input type="hidden" id="productId"><div class="form-grid"><input id="pNombre" placeholder="Nombre"><select id="pCategoria"></select><input id="pPrecio" type="number" step="0.01" placeholder="Precio USD"><input id="pOriginal" type="number" step="0.01" placeholder="Precio original"><input id="pStock" type="number" step="0.01" placeholder="Stock"><input id="pBadge" placeholder="Etiqueta: Oferta, Nuevo..."><select id="pActivo"><option value="true">Activo</option><option value="false">Oculto</option></select><select id="pOferta"><option value="false">Normal</option><option value="true">Oferta</option></select></div><br><textarea id="pDescripcion" rows="3" placeholder="Descripción"></textarea><div class="spec-admin-box"><div class="spec-admin-head"><b>Especificaciones</b><button class="btn light" type="button" onclick="addSpecRow()">+ Agregar especificación</button></div><div class="spec-admin-list" id="pSpecsList"></div><p class="muted" style="margin-top:8px">Sin corchetes ni JSON. Ejemplo: en la izquierda escribes <b>Potencia</b> y en la derecha <b>750W</b>.</p></div><input id="pImagenes" type="file" multiple accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearProductImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes subir hasta 3 imágenes por producto. Para eliminar una imagen ya guardada, toca la X roja en la vista previa y luego guarda el producto.</p><div class="admin-preview-images" id="pImagenesPreview"></div><br><button class="btn green" onclick="saveProduct()">Guardar producto</button><button class="btn gray" onclick="clearProductForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Producto</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="adminProductsTable"></tbody></table></div></div>
+<div class="admin-section active" id="productosAdmin"><div class="admin-card"><h3 id="productFormTitle">Agregar producto</h3><input type="hidden" id="productId"><div class="form-grid"><input id="pNombre" placeholder="Nombre"><select id="pCategoria"></select><input id="pPrecio" type="number" step="0.01" placeholder="Precio USD"><input id="pOriginal" type="number" step="0.01" placeholder="Precio original"><input id="pStock" type="number" placeholder="Stock"><input id="pBadge" placeholder="Etiqueta: Oferta, Nuevo..."><select id="pActivo"><option value="true">Activo</option><option value="false">Oculto</option></select><select id="pOferta"><option value="false">Normal</option><option value="true">Oferta</option></select></div><br><textarea id="pDescripcion" rows="3" placeholder="Descripción"></textarea><div class="spec-admin-box"><div class="spec-admin-head"><b>Especificaciones</b><button class="btn light" type="button" onclick="addSpecRow()">+ Agregar especificación</button></div><div class="spec-admin-list" id="pSpecsList"></div><p class="muted" style="margin-top:8px">Sin corchetes ni JSON. Ejemplo: en la izquierda escribes <b>Potencia</b> y en la derecha <b>750W</b>.</p></div><input id="pImagenes" type="file" multiple accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearProductImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes subir hasta 3 imágenes por producto. Para eliminar una imagen ya guardada, toca la X roja en la vista previa y luego guarda el producto.</p><div class="admin-preview-images" id="pImagenesPreview"></div><br><button class="btn green" onclick="saveProduct()">Guardar producto</button><button class="btn gray" onclick="clearProductForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Producto</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="adminProductsTable"></tbody></table></div></div>
 <div class="admin-section" id="categoriasAdmin"><div class="admin-card"><h3 id="categoryFormTitle">Agregar categoría</h3><input type="hidden" id="cId"><div class="form-grid"><input id="cNombre" placeholder="Nombre"><input id="cSlug" placeholder="slug sin espacios"><input id="cIcono" placeholder="Emoji opcional"><input id="cOrden" type="number" placeholder="Orden"></div><br><label><b>Imagen de la categoría</b></label><input id="cImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearCategoryImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes usar una imagen en vez del icono. Para eliminar una imagen guardada, toca la X roja y guarda la categoría.</p><div class="admin-preview-images" id="cImagenPreview"></div><br><textarea id="cDesc" placeholder="Descripción"></textarea><br><br><button class="btn green" onclick="saveCategory()">Guardar categoría</button><button class="btn gray" onclick="clearCategoryForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen/Icono</th><th>Categoría</th><th>Slug</th><th>Acción</th></tr></thead><tbody id="adminCategoriesTable"></tbody></table></div></div>
 <div class="admin-section" id="promosAdmin"><div class="admin-card"><h3 id="promoFormTitle">Agregar promoción</h3><input type="hidden" id="promoId"><div class="form-grid"><input id="promoTitulo" placeholder="Título"><input id="promoBoton" placeholder="Texto botón"><input id="promoOrden" type="number" placeholder="Orden"><select id="promoActivo"><option value="true">Activa</option><option value="false">Oculta</option></select></div><br><textarea id="promoDesc" placeholder="Descripción"></textarea><br><br><label><b>Imagen de promoción</b></label><input id="promoImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearPromoImageInput()">Limpiar selección nueva</button></div><div class="admin-preview-images" id="promoImagenPreview"></div><br><button class="btn green" onclick="savePromo()">Guardar promoción</button><button class="btn gray" onclick="clearPromoForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Promo</th><th>Acción</th></tr></thead><tbody id="adminPromosTable"></tbody></table></div></div>
 <div class="admin-section" id="configAdmin"><div class="admin-card"><h3>Configuración de tienda</h3><div class="form-grid"><input id="cfgNombre" placeholder="Nombre tienda"><input id="cfgSlogan" placeholder="Título principal"><input id="cfgWhatsapp" placeholder="WhatsApp con código país"><input id="cfgInstagram" placeholder="Instagram. Ej: @ferreteria_calimioyo"><input id="cfgTasa" type="number" step="0.01" placeholder="Tasa Bs"><input id="cfgEnvio" type="number" step="0.01" placeholder="Envío gratis desde USD"></div><br><textarea id="cfgDesc" rows="3" placeholder="Texto del hero"></textarea><br><br><div class="image-admin-line"><label>Logo 1</label><input id="cfgLogo1" type="file" accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgLogo1')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgLogo1Preview"></div><div class="image-admin-line"><label>Logo 2</label><input id="cfgLogo2" type="file" accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgLogo2')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgLogo2Preview"></div><div class="image-admin-line"><label>Slide hero</label><input id="cfgHero" type="file" multiple accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgHero')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgHeroPreview"></div><p class="admin-image-note">Para eliminar logos o imágenes del slide, toca la X roja y guarda la configuración.</p><br><textarea id="cfgFooter" placeholder="Texto footer"></textarea><br><br><button class="btn green" onclick="saveConfig()">Guardar configuración</button></div></div>
@@ -442,7 +442,30 @@ document.addEventListener('DOMContentLoaded', init);
 async function loadAll(){ await Promise.all([loadConfig(),loadCategories(),loadProducts(),loadPromos()]); renderAll(); }
 async function loadConfig(){ const {data,error}=await supa.from('tienda_config').select('*').eq('id',1).single(); if(!error && data){config=data; exchangeRate=Number(data.tasa||36.5); currentCurrency=data.moneda_default||'USD';}}
 async function loadCategories(){ const {data}=await supa.from('categorias').select('*').eq('activo',true).order('orden'); categories=data||[]; }
-async function loadProducts(){ const {data}=await supa.from('productos').select('*').order('created_at',{ascending:false}); products=data||[]; }
+async function loadProducts(){
+  // Supabase puede devolver máximo 1000 filas por consulta.
+  // Como tu inventario tiene más de 2000 productos, los cargamos por páginas.
+  const all=[];
+  const pageSize=1000;
+  let from=0;
+  while(true){
+    const {data,error}=await supa
+      .from('productos')
+      .select('*')
+      .order('orden',{ascending:true})
+      .range(from, from + pageSize - 1);
+    if(error){
+      console.error('Error cargando productos:', error);
+      notify(error.message || 'Error cargando productos');
+      break;
+    }
+    all.push(...(data||[]));
+    if(!data || data.length < pageSize) break;
+    from += pageSize;
+  }
+  products=all;
+  console.log('Productos cargados:', products.length, 'Categorías:', [...new Set(products.map(p=>p.categoria))]);
+}
 async function loadPromos(){ const {data}=await supa.from('promociones').select('*').eq('activo',true).order('orden'); promos=data||[]; }
 function renderAll(){ applyConfig(); renderNav(); renderCategories(); renderFilterTabs(); renderProducts(); renderPromos(); renderCart(); fillAdminSelects(); renderAdminTables(); }
 function applyConfig(){
@@ -466,10 +489,75 @@ function applyConfig(){
   slideIndex=0;
   heroIntervalId=setInterval(()=>{const slides=document.querySelectorAll('.slide'); if(!slides.length)return; slides[slideIndex]?.classList.remove('active'); slideIndex=(slideIndex+1)%slides.length; slides[slideIndex]?.classList.add('active');},3500);
 }
-function renderNav(){ $('navLinks').innerHTML='<li><a href="#inicio" class="active">Inicio</a></li><li><a href="#productos">Productos</a></li>'+categories.map(c=>`<li><a href="#productos" onclick="filterProducts('${c.slug}')">${c.nombre}</a></li>`).join(''); }
-function renderCategories(){ $('categoryGrid').innerHTML=categories.map(c=>`<div class="category-card" onclick="filterProducts('${c.slug}')"><div class="category-icon">${categoryVisual(c)}</div><h3>${c.nombre}</h3><p>${c.descripcion||''}</p></div>`).join('') || '<p>No hay categorías.</p>'; }
-function renderFilterTabs(){ $('filterTabs').innerHTML=`<button class="filter-btn ${currentFilter==='todos'?'active':''}" onclick="filterProducts('todos')">Todos</button><button class="filter-btn ${currentFilter==='ofertas'?'active':''}" onclick="filterProducts('ofertas')">Ofertas</button>`+categories.map(c=>`<button class="filter-btn ${currentFilter===c.slug?'active':''}" onclick="filterProducts('${c.slug}')">${c.nombre}</button>`).join(''); }
-function productVisible(p){ if(!p.activo) return false; const q=$('searchInput').value.trim().toLowerCase(); const matchQ=!q || (p.nombre||'').toLowerCase().includes(q) || (p.descripcion||'').toLowerCase().includes(q) || (p.categoria||'').toLowerCase().includes(q); const matchF=currentFilter==='todos'||(currentFilter==='ofertas'&&p.oferta)||p.categoria===currentFilter; return matchQ&&matchF; }
+const CATEGORY_META = {
+  'herramientas':{nombre:'Herramientas',icono:'🛠️',descripcion:'Manuales y eléctricas',orden:1},
+  'conexiones':{nombre:'Conexiones',icono:'🔗',descripcion:'Conexiones y accesorios',orden:2},
+  'construccion':{nombre:'Construcción',icono:'🧱',descripcion:'Materiales de obra',orden:3},
+  'electricidad':{nombre:'Electricidad',icono:'⚡',descripcion:'Cables y accesorios eléctricos',orden:4},
+  'tornilleria':{nombre:'Tornillería',icono:'🔩',descripcion:'Tornillos, tuercas y fijaciones',orden:5},
+  'repuestos':{nombre:'Repuestos',icono:'⚙️',descripcion:'Repuestos y partes',orden:6},
+  'accesorios':{nombre:'Accesorios',icono:'🧰',descripcion:'Accesorios varios',orden:7},
+  'soportes':{nombre:'Soportes',icono:'🧲',descripcion:'Soportes y bases',orden:8},
+  'riego':{nombre:'Riego',icono:'💧',descripcion:'Riego y mangueras',orden:9},
+  'pintura':{nombre:'Pintura',icono:'🎨',descripcion:'Pinturas y accesorios',orden:10},
+  'cerrajeria':{nombre:'Cerrajería',icono:'🔐',descripcion:'Cerraduras y seguridad',orden:11},
+  'pegamentos':{nombre:'Pegamentos',icono:'🧴',descripcion:'Adhesivos y selladores',orden:12},
+  'agricola':{nombre:'Agrícola',icono:'🌾',descripcion:'Productos agrícolas',orden:13},
+  'lubricantes':{nombre:'Lubricantes',icono:'🛢️',descripcion:'Aceites y lubricantes',orden:14},
+  'proteccion-individual':{nombre:'Protección individual',icono:'🦺',descripcion:'Seguridad personal',orden:15},
+  'estructuras':{nombre:'Estructuras',icono:'🏗️',descripcion:'Perfiles y estructuras',orden:16},
+  'limpieza':{nombre:'Limpieza',icono:'🧽',descripcion:'Productos de limpieza',orden:17},
+  'jardineria':{nombre:'Jardinería',icono:'🌱',descripcion:'Jardín y mantenimiento',orden:18},
+  'iluminacion':{nombre:'Iluminación',icono:'💡',descripcion:'Bombillos y luminarias',orden:19},
+  'cocina':{nombre:'Cocina',icono:'🍳',descripcion:'Artículos de cocina',orden:20},
+  'griferia':{nombre:'Grifería',icono:'🚿',descripcion:'Grifería y plomería',orden:21},
+  'impermeabilizantes':{nombre:'Impermeabilizantes',icono:'☔',descripcion:'Sellado e impermeabilización',orden:22},
+  'electrodomesticos':{nombre:'Electrodomésticos',icono:'🔌',descripcion:'Equipos eléctricos del hogar',orden:23},
+  'bolsas':{nombre:'Bolsas',icono:'🛍️',descripcion:'Bolsas y empaques',orden:24},
+  'puertas':{nombre:'Puertas',icono:'🚪',descripcion:'Puertas y accesorios',orden:25}
+};
+function activeProducts(){ return products.filter(p=>p.activo!==false); }
+function titleFromSlug(slug){ return String(slug||'').split('-').filter(Boolean).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ') || 'Categoría'; }
+function hasProductsInCategory(slug){ return activeProducts().some(p=>String(p.categoria||'').trim()===String(slug).trim()); }
+function visibleCategories(){
+  const slugs=[...new Set(activeProducts().map(p=>String(p.categoria||'').trim()).filter(Boolean))];
+  const dbCats=new Map(categories.map(c=>[String(c.slug||'').trim(),c]));
+  return slugs.map((slug,i)=>{
+    const db=dbCats.get(slug)||{};
+    const meta=CATEGORY_META[slug]||{};
+    return {
+      ...db,
+      slug,
+      nombre:db.nombre||meta.nombre||titleFromSlug(slug),
+      descripcion:db.descripcion||meta.descripcion||'',
+      icono:db.icono||meta.icono||'🛠️',
+      imagen:db.imagen||null,
+      orden:Number(db.orden ?? meta.orden ?? (900+i)),
+      activo:true
+    };
+  }).sort((a,b)=>Number(a.orden||0)-Number(b.orden||0) || String(a.nombre).localeCompare(String(b.nombre),'es'));
+}
+function hasOfferProducts(){ return activeProducts().some(p=>p.oferta===true); }
+function renderNav(){
+  const cats=visibleCategories();
+  $('navLinks').innerHTML='<li><a href="#inicio" class="active">Inicio</a></li><li><a href="#productos">Productos</a></li>'+cats.map(c=>`<li><a href="#productos" onclick="filterProducts('${c.slug}')">${c.nombre}</a></li>`).join('');
+}
+function renderCategories(){
+  const cats=visibleCategories();
+  $('categoryGrid').innerHTML=cats.map(c=>`<div class="category-card" onclick="filterProducts('${c.slug}')"><div class="category-icon">${categoryVisual(c)}</div><h3>${c.nombre}</h3><p>${c.descripcion||''}</p></div>`).join('') || '<p>No hay categorías con productos activos.</p>';
+}
+function renderFilterTabs(){
+  const cats=visibleCategories();
+  const ofertaBtn = hasOfferProducts() ? `<button class="filter-btn ${currentFilter==='__ofertas__'?'active':''}" onclick="filterProducts('__ofertas__')">Ofertas</button>` : '';
+  $('filterTabs').innerHTML=`<button class="filter-btn ${currentFilter==='todos'?'active':''}" onclick="filterProducts('todos')">Todos</button>${ofertaBtn}`+cats.map(c=>`<button class="filter-btn ${currentFilter===c.slug?'active':''}" onclick="filterProducts('${c.slug}')">${c.nombre}</button>`).join('');
+}
+function productVisible(p){
+  if(p.activo===false) return false;
+  const q=$('searchInput').value.trim().toLowerCase();
+  const matchQ=!q || (p.nombre||'').toLowerCase().includes(q) || (p.descripcion||'').toLowerCase().includes(q) || (p.categoria||'').toLowerCase().includes(q);
+  const matchF=currentFilter==='todos'||(currentFilter==='__ofertas__'&&p.oferta===true)||String(p.categoria||'')===String(currentFilter);
+  return matchQ&&matchF;
+}
 function renderProducts(){
   renderFilterTabs();
   const list=products.filter(productVisible);
@@ -626,7 +714,7 @@ async function deleteStorageUrls(urls){
   const {error}=await supa.storage.from(STORAGE_BUCKET).remove(paths);
   if(error) notify('No se pudo borrar una imagen de Storage: '+error.message);
 }
-function fillAdminSelects(){ $('pCategoria').innerHTML=categories.map(c=>`<option value="${c.slug}">${c.nombre}</option>`).join(''); }
+function fillAdminSelects(){ const cats=visibleCategories(); $('pCategoria').innerHTML=cats.map(c=>`<option value="${c.slug}">${c.nombre}</option>`).join(''); }
 function renderAdminTables(){
   $('adminProductsTable').innerHTML=products.map(p=>`<tr><td><div style="display:flex;gap:4px;flex-wrap:wrap">${productImages(p).map(u=>imgHtml(u,'preview-img')).join('')}</div><span class="muted">${productImages(p).filter(u=>String(u).startsWith('http')).length}/3 imágenes</span></td><td><b>${p.nombre}</b><br><span class="muted">${p.categoria}</span></td><td>${money(p.precio)}</td><td>${p.stock}</td><td><button class="btn" onclick="editProduct('${p.id}')">Editar</button> <button class="btn danger" onclick="deleteProduct('${p.id}')">Borrar</button></td></tr>`).join('');
   $('adminCategoriesTable').innerHTML=categories.map(c=>`<tr><td>${categoryVisual(c,'preview-img')}</td><td>${c.nombre}</td><td>${c.slug}</td><td><button class="btn" onclick="editCategory('${c.id}')">Editar</button> <button class="btn danger" onclick="deleteCategory('${c.id}')">Borrar</button></td></tr>`).join('');
