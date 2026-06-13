@@ -380,6 +380,69 @@ async function loadAnalytics(){
     }
   </style>
 
+
+
+  <style>
+    /* Admin completo lado a lado: menú + formulario/control + lista */
+    #categoriasAdmin.active,
+    #promosAdmin.active,
+    #pedidosAdmin.active,
+    #analyticsAdmin.active{
+      display:grid!important;
+      grid-template-columns:minmax(340px,.9fr) minmax(520px,1.45fr);
+      gap:18px;
+      align-items:start;
+    }
+    #categoriasAdmin > .admin-card:first-child,
+    #promosAdmin > .admin-card:first-child,
+    #pedidosAdmin > .admin-card:first-child,
+    #analyticsAdmin > .admin-card:first-child{
+      position:sticky;
+      top:96px;
+      max-height:calc(100vh - 115px);
+      overflow:auto;
+    }
+    #categoriasAdmin .table-wrap,
+    #promosAdmin .table-wrap,
+    #pedidosAdmin .table-wrap,
+    #analyticsAdmin #analyticsContent{
+      min-width:0;
+      max-height:calc(100vh - 115px);
+      overflow:auto;
+    }
+    #categoriasAdmin .admin-table thead th,
+    #promosAdmin .admin-table thead th,
+    #pedidosAdmin .admin-table thead th{
+      position:sticky;
+      top:0;
+      z-index:2;
+    }
+    #analyticsAdmin #analyticsContent .analytics-cards{
+      grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    }
+    @media(max-width:1150px){
+      #categoriasAdmin.active,
+      #promosAdmin.active,
+      #pedidosAdmin.active,
+      #analyticsAdmin.active{
+        grid-template-columns:1fr;
+      }
+      #categoriasAdmin > .admin-card:first-child,
+      #promosAdmin > .admin-card:first-child,
+      #pedidosAdmin > .admin-card:first-child,
+      #analyticsAdmin > .admin-card:first-child{
+        position:static;
+        max-height:none;
+      }
+      #categoriasAdmin .table-wrap,
+      #promosAdmin .table-wrap,
+      #pedidosAdmin .table-wrap,
+      #analyticsAdmin #analyticsContent{
+        max-height:none;
+      }
+    }
+  </style>
+
 </head>
 <body>
 <header>
