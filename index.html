@@ -443,8 +443,74 @@ async function loadAnalytics(){
     }
   </style>
 
+
+  <style>
+    /* Pantalla de bienvenida mientras carga la tienda */
+    .page-loader{
+      position:fixed;
+      inset:0;
+      background:linear-gradient(135deg,#0D47A1,#1565C0);
+      color:white;
+      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:24px;
+      transition:opacity .35s ease, visibility .35s ease;
+    }
+    .page-loader.hide{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .page-loader-box{
+      max-width:560px;
+      width:100%;
+    }
+    .page-loader-logo{
+      width:150px;
+      max-width:70%;
+      height:auto;
+      object-fit:contain;
+      margin:0 auto 18px;
+      display:block;
+      filter:drop-shadow(0 10px 22px rgba(0,0,0,.25));
+    }
+    .page-loader h2{
+      font-size:clamp(1.8rem,5vw,3rem);
+      line-height:1.1;
+      margin-bottom:12px;
+      color:white;
+    }
+    .page-loader p{
+      font-size:clamp(1rem,3vw,1.25rem);
+      color:#eaf2ff;
+      margin-bottom:22px;
+    }
+    .loader-spinner{
+      width:48px;
+      height:48px;
+      border:5px solid rgba(255,255,255,.35);
+      border-top-color:#FFC107;
+      border-radius:50%;
+      margin:0 auto;
+      animation:loaderSpin .85s linear infinite;
+    }
+    @keyframes loaderSpin{to{transform:rotate(360deg)}}
+  </style>
+
 </head>
 <body>
+<div class="page-loader" id="pageLoader">
+  <div class="page-loader-box">
+    <img class="page-loader-logo" src="https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/136f2e40-f64e-4932-a633-0b0b47dda7f6.png" alt="Ferretería CALIMIOYO">
+    <h2>Bienvenido a Ferretería CALIMIOYO</h2>
+    <p>Donde encontrarás todo lo que buscas.</p>
+    <div class="loader-spinner" aria-label="Cargando"></div>
+  </div>
+</div>
+
 <header>
   <div class="container header-content">
     <div class="logo" onclick="scrollTo({top:0,behavior:'smooth'})">
@@ -494,6 +560,13 @@ let adminProductSearchTerm = '', adminProductCategoryFilter = 'todos', adminProd
 let productoImagenesActuales = [], categoriaImagenActual = null, promoImagenActual = null, cfgLogo1Actual = null, cfgLogo2Actual = null, cfgHeroActual = [], heroIntervalId = null;
 const $ = id => document.getElementById(id);
 function notify(msg){ const n=$('notification'); n.textContent=msg; n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),2600); }
+function hidePageLoader(){
+  const loader=$('pageLoader');
+  if(!loader) return;
+  loader.classList.add('hide');
+  setTimeout(()=>loader.remove(),500);
+}
+
 function money(usd){ if(currentCurrency==='VES') return 'Bs. '+Number(usd*exchangeRate).toLocaleString('es-VE',{minimumFractionDigits:2,maximumFractionDigits:2}); return '$'+Number(usd).toFixed(2); }
 function productImages(p){ const arr=Array.isArray(p?.imagenes)?p.imagenes.filter(Boolean):[]; return (arr.length?arr:['🛠️']).slice(0,3); }
 function firstImage(arr){ return Array.isArray(arr)&&arr.filter(Boolean).length ? arr.filter(Boolean)[0] : '🛠️'; }
@@ -604,7 +677,11 @@ function getSpecsFromForm(){
   return specs;
 }
 async function init(){
-  await loadAll();
+  try{
+    await loadAll();
+  }finally{
+    hidePageLoader();
+  }
   setSpecsForm({});
   $('searchInput').addEventListener('input',()=>renderProducts());
   $('adminProductSearch')?.addEventListener('input',e=>{ adminProductSearchTerm=e.target.value.trim().toLowerCase(); renderAdminProductsTable(); });
@@ -626,6 +703,7 @@ async function init(){
   if(new URLSearchParams(location.search).get('admin')==='1' || location.hash==='#admin'){ setTimeout(()=>abrirPanelAdminLocal(),350); }
 }
 document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('load',()=>setTimeout(hidePageLoader,12000));
 async function loadAll(){ await Promise.all([loadConfig(),loadCategories(),loadProducts(),loadPromos()]); renderAll(); }
 async function loadConfig(){ const {data,error}=await supa.from('tienda_config').select('*').eq('id',1).single(); if(!error && data){config=data; exchangeRate=Number(data.tasa||36.5); currentCurrency=data.moneda_default||'USD';}}
 async function loadCategories(){ const {data}=await supa.from('categorias').select('*').eq('activo',true).order('orden'); categories=data||[]; }
