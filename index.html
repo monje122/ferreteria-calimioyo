@@ -229,6 +229,42 @@ async function loadAnalytics(){
       .whatsapp-float{right:16px;bottom:16px;width:58px;height:58px}
       .notification{right:16px;bottom:88px}
       .category-icon{width:100%!important;height:125px!important;font-size:4.2rem!important}
+      .main-header-logo{height:58px!important;max-width:140px!important}
+    }
+
+    .main-header-logo{
+      height:70px!important;
+      max-width:170px!important;
+      object-fit:contain!important;
+      display:block!important;
+    }
+    .logo{gap:0!important}
+    .footer-links a.instagram-link{
+      background:transparent!important;
+      width:48px!important;
+      height:48px!important;
+      padding:0!important;
+      overflow:hidden!important;
+    }
+    .footer-links a.instagram-link img{
+      width:100%!important;
+      height:100%!important;
+      object-fit:contain!important;
+      display:block!important;
+    }
+    .whatsapp-float{
+      background:transparent!important;
+      box-shadow:none!important;
+      overflow:hidden!important;
+    }
+    .whatsapp-float img{
+      width:100%!important;
+      height:100%!important;
+      object-fit:contain!important;
+      display:block!important;
+    }
+    @media(max-width:650px){
+      .main-header-logo{height:58px!important;max-width:140px!important}
     }
   </style>
 
@@ -265,12 +301,85 @@ async function loadAnalytics(){
     }
   </style>
 
+
+  <style>
+    /* Organización del panel admin de productos */
+    .admin-products-layout{
+      display:grid;
+      grid-template-columns:minmax(360px,.95fr) minmax(560px,1.55fr);
+      gap:18px;
+      align-items:start;
+    }
+    .admin-products-form-column,
+    .admin-products-list-column{min-width:0}
+    #productFormCard{
+      position:sticky;
+      top:96px;
+      max-height:calc(100vh - 115px);
+      overflow:auto;
+    }
+    .admin-products-list-column .table-wrap{
+      max-height:calc(100vh - 260px);
+      overflow:auto;
+    }
+    .admin-products-list-column .admin-table thead th{
+      position:sticky;
+      top:0;
+      z-index:2;
+    }
+    .admin-product-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .admin-product-tools{display:flex;flex-direction:column;gap:12px}
+    .admin-product-tools .form-grid{align-items:end}
+    .admin-product-counter{font-weight:800;color:#0D47A1}
+    .admin-table .admin-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .admin-table .product-name-cell{min-width:230px}
+    .admin-pill{display:inline-block;border-radius:999px;padding:4px 8px;font-size:.78rem;font-weight:800;background:#eef2f7;color:#0D47A1;margin-top:4px}
+    .admin-pill.off{background:#fee2e2;color:#991b1b}
+    .admin-pill.offer{background:#fff7ed;color:#9a3412}
+    @media(max-width:1150px){
+      .admin-products-layout{grid-template-columns:1fr}
+      #productFormCard{position:static;max-height:none}
+      .admin-products-list-column .table-wrap{max-height:none}
+    }
+    @media(max-width:800px){
+      .admin-menu{position:static}
+      .admin-table .admin-actions .btn{width:100%}
+    }
+  </style>
+
+
+  <style>
+    /* Panel Admin arriba, antes de la tienda */
+    .admin-panel{
+      scroll-margin-top:90px;
+      border-top:5px solid var(--secondary);
+      border-bottom:5px solid var(--secondary);
+      box-shadow:0 12px 35px #0001;
+    }
+    .admin-panel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .admin-panel-head .section-title{
+      margin-bottom:0;
+      text-align:left;
+    }
+    @media(max-width:800px){
+      .admin-panel-head .section-title{width:100%;text-align:center}
+      .admin-panel-head .btn{width:100%}
+    }
+  </style>
+
 </head>
 <body>
 <header>
   <div class="container header-content">
     <div class="logo" onclick="scrollTo({top:0,behavior:'smooth'})">
-      <img id="logo1" alt="logo 1"><img id="logo2" alt="logo 2"><span class="logo-title" id="storeName">CALIMIOYO</span>
+      <img id="mainHeaderLogo" class="main-header-logo" src="https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/136f2e40-f64e-4932-a633-0b0b47dda7f6.png" alt="CALIMIOYO">
     </div>
     <div class="header-controls">
       <button class="btn light" id="currencyBtn" onclick="toggleCurrency()">USD</button>
@@ -280,26 +389,27 @@ async function loadAnalytics(){
   </div>
 </header>
 <nav><div class="container"><ul class="nav-links" id="navLinks"><li><a href="#inicio" class="active">Inicio</a></li><li><a href="#productos">Productos</a></li></ul></div></nav>
+<section class="section admin-panel" id="adminPanel"><div class="container"><div class="admin-panel-head"><h2 class="section-title">Panel Admin</h2><button class="btn gray" type="button" onclick="closeAdminPanel()">Cerrar panel</button></div><div id="loginBox" class="admin-card"><h3>Entrar con Supabase Auth</h3><p class="muted">Crea tu usuario en Supabase > Authentication > Users.</p><div class="form-grid"><input id="adminEmail" type="email" placeholder="Correo admin"><input id="adminPass" type="password" placeholder="Contraseña"></div><br><button class="btn green" id="adminLoginBtn" onclick="adminLogin()">Entrar</button><p class="muted" id="adminLoginLockMsg" style="margin-top:10px"></p></div><div id="adminContent" class="admin-grid hidden"><div class="admin-menu"><button class="btn green" onclick="showAdminTab('productosAdmin')">Productos</button><button class="btn" onclick="showAdminTab('analyticsAdmin')">Análisis</button><button class="btn" onclick="showAdminTab('categoriasAdmin')">Categorías</button><button class="btn" onclick="showAdminTab('promosAdmin')">Promociones</button><button class="btn" onclick="showAdminTab('configAdmin')">Configuración</button><button class="btn" onclick="showAdminTab('pedidosAdmin')">Pedidos</button><button class="btn danger" onclick="adminLogout()">Salir</button></div><div>
+<div class="admin-section active" id="productosAdmin"><div class="admin-products-layout"><div class="admin-products-form-column"><div class="admin-card" id="productFormCard"><h3 id="productFormTitle">Agregar producto</h3><p class="muted">Edita nombre, categoría, precio, stock, oferta, imágenes y especificaciones.</p><br><input type="hidden" id="productId"><div class="form-grid"><input id="pNombre" placeholder="Nombre"><select id="pCategoria"></select><input id="pPrecio" type="number" step="0.01" placeholder="Precio USD"><input id="pOriginal" type="number" step="0.01" placeholder="Precio original"><input id="pStock" type="number" step="0.01" placeholder="Stock"><input id="pBadge" placeholder="Etiqueta: Oferta, Nuevo..."><select id="pActivo"><option value="true">Activo</option><option value="false">Oculto</option></select><select id="pOferta"><option value="false">Normal</option><option value="true">Oferta</option></select></div><br><textarea id="pDescripcion" rows="3" placeholder="Descripción"></textarea><div class="spec-admin-box"><div class="spec-admin-head"><b>Especificaciones</b><button class="btn light" type="button" onclick="addSpecRow()">+ Agregar especificación</button></div><div class="spec-admin-list" id="pSpecsList"></div><p class="muted" style="margin-top:8px">Sin corchetes ni JSON. Ejemplo: en la izquierda escribes <b>Potencia</b> y en la derecha <b>750W</b>.</p></div><input id="pImagenes" type="file" multiple accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearProductImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes subir hasta 3 imágenes por producto. Para eliminar una imagen ya guardada, toca la X roja en la vista previa y luego guarda el producto.</p><div class="admin-preview-images" id="pImagenesPreview"></div><br><div class="admin-product-actions"><button class="btn green" onclick="saveProduct()">Guardar producto</button><button class="btn gray" onclick="clearProductForm()">Nuevo / limpiar</button></div></div></div><div class="admin-products-list-column"><div class="admin-card admin-product-tools"><h3>🔎 Buscar producto para editar</h3><p class="muted">Busca por nombre, categoría, código/SKU, descripción o etiqueta. Luego toca <b>Editar</b>.</p><div class="form-grid"><input id="adminProductSearch" placeholder="Buscar producto... Ej: martillo, cable, pintura"><select id="adminProductCategoryFilter"><option value="todos">Todas las categorías</option></select><select id="adminProductStockFilter"><option value="todos">Todos</option><option value="activo">Activos</option><option value="oculto">Ocultos</option><option value="oferta">Ofertas</option><option value="bajo">Stock bajo</option><option value="agotado">Agotados</option></select><button class="btn gray" type="button" onclick="clearAdminProductSearch()">Limpiar búsqueda</button></div><div class="admin-product-counter" id="adminProductCounter">Cargando productos...</div></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Producto</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="adminProductsTable"></tbody></table></div></div></div></div>
+<div class="admin-section" id="categoriasAdmin"><div class="admin-card"><h3 id="categoryFormTitle">Agregar categoría</h3><input type="hidden" id="cId"><div class="form-grid"><input id="cNombre" placeholder="Nombre"><input id="cSlug" placeholder="slug sin espacios"><input id="cIcono" placeholder="Emoji opcional"><input id="cOrden" type="number" placeholder="Orden"></div><br><label><b>Imagen de la categoría</b></label><input id="cImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearCategoryImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes usar una imagen en vez del icono. Para eliminar una imagen guardada, toca la X roja y guarda la categoría.</p><div class="admin-preview-images" id="cImagenPreview"></div><br><textarea id="cDesc" placeholder="Descripción"></textarea><br><br><button class="btn green" onclick="saveCategory()">Guardar categoría</button><button class="btn gray" onclick="clearCategoryForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen/Icono</th><th>Categoría</th><th>Slug</th><th>Acción</th></tr></thead><tbody id="adminCategoriesTable"></tbody></table></div></div>
+<div class="admin-section" id="promosAdmin"><div class="admin-card"><h3 id="promoFormTitle">Agregar promoción</h3><input type="hidden" id="promoId"><div class="form-grid"><input id="promoTitulo" placeholder="Título"><input id="promoBoton" placeholder="Texto botón"><input id="promoOrden" type="number" placeholder="Orden"><select id="promoActivo"><option value="true">Activa</option><option value="false">Oculta</option></select></div><br><textarea id="promoDesc" placeholder="Descripción"></textarea><br><br><label><b>Imagen de promoción</b></label><input id="promoImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearPromoImageInput()">Limpiar selección nueva</button></div><div class="admin-preview-images" id="promoImagenPreview"></div><br><button class="btn green" onclick="savePromo()">Guardar promoción</button><button class="btn gray" onclick="clearPromoForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Promo</th><th>Acción</th></tr></thead><tbody id="adminPromosTable"></tbody></table></div></div>
+<div class="admin-section" id="configAdmin"><div class="admin-card"><h3>Configuración de tienda</h3><div class="form-grid"><input id="cfgNombre" placeholder="Nombre tienda"><input id="cfgSlogan" placeholder="Título principal"><input id="cfgWhatsapp" placeholder="WhatsApp con código país"><input id="cfgInstagram" placeholder="Instagram. Ej: @ferreteria_calimioyo"><input id="cfgTasa" type="number" step="0.01" placeholder="Tasa Bs"><input id="cfgEnvio" type="number" step="0.01" placeholder="Envío gratis desde USD"></div><br><textarea id="cfgDesc" rows="3" placeholder="Texto del hero"></textarea><br><br><div class="admin-image-note">El logo principal está fijo arriba con la imagen indicada. Ya no se usan Logo 1 ni Logo 2.</div><input id="cfgLogo1" class="hidden" type="file" accept="image/*"><input id="cfgLogo2" class="hidden" type="file" accept="image/*"><div class="admin-preview-images hidden" id="cfgLogo1Preview"></div><div class="admin-preview-images hidden" id="cfgLogo2Preview"></div><br><div class="image-admin-line"><label>Slide hero</label><input id="cfgHero" type="file" multiple accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgHero')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgHeroPreview"></div><p class="admin-image-note">Para eliminar imágenes del slide, toca la X roja y guarda la configuración.</p><br><textarea id="cfgFooter" placeholder="Texto footer"></textarea><br><br><button class="btn green" onclick="saveConfig()">Guardar configuración</button></div></div>
+<div class="admin-section" id="pedidosAdmin"><div class="admin-card"><h3>Pedidos recibidos</h3><button class="btn" onclick="loadOrders()">Actualizar pedidos</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="ordersTable"></tbody></table></div></div>
+<div class="admin-section" id="analyticsAdmin"><div class="admin-card"><h3>📊 Análisis de ventas</h3><p class="muted">Resumen profesional calculado con pedidos aprobados y entregados.</p><br><button class="btn green" onclick="loadAnalytics()">Actualizar análisis</button> <button class="btn gray" onclick="clearAnalyticsView()">Limpiar análisis</button></div><div id="analyticsContent"></div></div>
+</div></div></div></section>
 <section class="hero" id="inicio"><div class="slider" id="heroSlider"></div><div class="container hero-content"><h1 id="heroTitle">Construye tus sueños</h1><p id="heroDesc">Productos para profesionales y hogar.</p><a href="#productos" class="btn green">Ver catálogo</a></div></section>
 <section class="section white"><div class="container"><h2 class="section-title">Categorías</h2><div class="grid category-grid" id="categoryGrid"></div></div></section>
 <section class="section" id="promociones"><div class="container"><h2 class="section-title">Promociones</h2><div class="grid products-grid" id="promoGrid"></div></div></section>
 <section class="section" id="productos"><div class="container"><h2 class="section-title">Productos</h2><div class="filter-tabs" id="filterTabs"><button class="filter-btn active" onclick="filterProducts('todos')">Todos</button><button class="filter-btn" onclick="filterProducts('ofertas')">Ofertas</button></div><div class="grid products-grid" id="productsGrid"></div></div></section>
 <section class="section features"><div class="container"><div class="grid features-grid"><div><div class="feature-icon">🚚</div><h3>Envío rápido</h3><p id="envioFeatureText">Entrega según zona</p></div><div><div class="feature-icon">🔒</div><h3>Pago seguro</h3><p>Pedido por WhatsApp</p></div><div><div class="feature-icon">💬</div><h3>Atención</h3><p>Asesoría personalizada</p></div></div></div></section>
 <footer><div class="container"><p id="footerText"></p><div class="footer-links" id="footerLinks"></div><p class="muted" id="footerEnvioText" style="color:#d1d5db"></p><div class="admin-footer-area"><button class="btn green admin-toggle" onclick="openAdmin()" title="Admin" aria-label="Admin">⚙️</button></div></div></footer>
-<section class="section admin-panel" id="adminPanel"><div class="container"><h2 class="section-title">Panel Admin</h2><div id="loginBox" class="admin-card"><h3>Entrar con Supabase Auth</h3><p class="muted">Crea tu usuario en Supabase > Authentication > Users.</p><div class="form-grid"><input id="adminEmail" type="email" placeholder="Correo admin"><input id="adminPass" type="password" placeholder="Contraseña"></div><br><button class="btn green" onclick="adminLogin()">Entrar</button></div><div id="adminContent" class="admin-grid hidden"><div class="admin-menu"><button class="btn green" onclick="showAdminTab('productosAdmin')">Productos</button><button class="btn" onclick="showAdminTab('analyticsAdmin')">Análisis</button><button class="btn" onclick="showAdminTab('categoriasAdmin')">Categorías</button><button class="btn" onclick="showAdminTab('promosAdmin')">Promociones</button><button class="btn" onclick="showAdminTab('configAdmin')">Configuración</button><button class="btn" onclick="showAdminTab('pedidosAdmin')">Pedidos</button><button class="btn danger" onclick="adminLogout()">Salir</button></div><div>
-<div class="admin-section active" id="productosAdmin"><div class="admin-card"><h3 id="productFormTitle">Agregar producto</h3><input type="hidden" id="productId"><div class="form-grid"><input id="pNombre" placeholder="Nombre"><select id="pCategoria"></select><input id="pPrecio" type="number" step="0.01" placeholder="Precio USD"><input id="pOriginal" type="number" step="0.01" placeholder="Precio original"><input id="pStock" type="number" placeholder="Stock"><input id="pBadge" placeholder="Etiqueta: Oferta, Nuevo..."><select id="pActivo"><option value="true">Activo</option><option value="false">Oculto</option></select><select id="pOferta"><option value="false">Normal</option><option value="true">Oferta</option></select></div><br><textarea id="pDescripcion" rows="3" placeholder="Descripción"></textarea><div class="spec-admin-box"><div class="spec-admin-head"><b>Especificaciones</b><button class="btn light" type="button" onclick="addSpecRow()">+ Agregar especificación</button></div><div class="spec-admin-list" id="pSpecsList"></div><p class="muted" style="margin-top:8px">Sin corchetes ni JSON. Ejemplo: en la izquierda escribes <b>Potencia</b> y en la derecha <b>750W</b>.</p></div><input id="pImagenes" type="file" multiple accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearProductImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes subir hasta 3 imágenes por producto. Para eliminar una imagen ya guardada, toca la X roja en la vista previa y luego guarda el producto.</p><div class="admin-preview-images" id="pImagenesPreview"></div><br><button class="btn green" onclick="saveProduct()">Guardar producto</button><button class="btn gray" onclick="clearProductForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Producto</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="adminProductsTable"></tbody></table></div></div>
-<div class="admin-section" id="categoriasAdmin"><div class="admin-card"><h3 id="categoryFormTitle">Agregar categoría</h3><input type="hidden" id="cId"><div class="form-grid"><input id="cNombre" placeholder="Nombre"><input id="cSlug" placeholder="slug sin espacios"><input id="cIcono" placeholder="Emoji opcional"><input id="cOrden" type="number" placeholder="Orden"></div><br><label><b>Imagen de la categoría</b></label><input id="cImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearCategoryImageInput()">Limpiar selección nueva</button></div><p class="muted">Puedes usar una imagen en vez del icono. Para eliminar una imagen guardada, toca la X roja y guarda la categoría.</p><div class="admin-preview-images" id="cImagenPreview"></div><br><textarea id="cDesc" placeholder="Descripción"></textarea><br><br><button class="btn green" onclick="saveCategory()">Guardar categoría</button><button class="btn gray" onclick="clearCategoryForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen/Icono</th><th>Categoría</th><th>Slug</th><th>Acción</th></tr></thead><tbody id="adminCategoriesTable"></tbody></table></div></div>
-<div class="admin-section" id="promosAdmin"><div class="admin-card"><h3 id="promoFormTitle">Agregar promoción</h3><input type="hidden" id="promoId"><div class="form-grid"><input id="promoTitulo" placeholder="Título"><input id="promoBoton" placeholder="Texto botón"><input id="promoOrden" type="number" placeholder="Orden"><select id="promoActivo"><option value="true">Activa</option><option value="false">Oculta</option></select></div><br><textarea id="promoDesc" placeholder="Descripción"></textarea><br><br><label><b>Imagen de promoción</b></label><input id="promoImagen" type="file" accept="image/*"><div class="image-admin-line"><button class="btn gray" type="button" onclick="clearPromoImageInput()">Limpiar selección nueva</button></div><div class="admin-preview-images" id="promoImagenPreview"></div><br><button class="btn green" onclick="savePromo()">Guardar promoción</button><button class="btn gray" onclick="clearPromoForm()">Limpiar</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Imagen</th><th>Promo</th><th>Acción</th></tr></thead><tbody id="adminPromosTable"></tbody></table></div></div>
-<div class="admin-section" id="configAdmin"><div class="admin-card"><h3>Configuración de tienda</h3><div class="form-grid"><input id="cfgNombre" placeholder="Nombre tienda"><input id="cfgSlogan" placeholder="Título principal"><input id="cfgWhatsapp" placeholder="WhatsApp con código país"><input id="cfgInstagram" placeholder="Instagram. Ej: @ferreteria_calimioyo"><input id="cfgTasa" type="number" step="0.01" placeholder="Tasa Bs"><input id="cfgEnvio" type="number" step="0.01" placeholder="Envío gratis desde USD"></div><br><textarea id="cfgDesc" rows="3" placeholder="Texto del hero"></textarea><br><br><div class="image-admin-line"><label>Logo 1</label><input id="cfgLogo1" type="file" accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgLogo1')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgLogo1Preview"></div><div class="image-admin-line"><label>Logo 2</label><input id="cfgLogo2" type="file" accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgLogo2')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgLogo2Preview"></div><div class="image-admin-line"><label>Slide hero</label><input id="cfgHero" type="file" multiple accept="image/*"><button class="btn gray" type="button" onclick="clearConfigFileInput('cfgHero')">Limpiar selección</button></div><div class="admin-preview-images" id="cfgHeroPreview"></div><p class="admin-image-note">Para eliminar logos o imágenes del slide, toca la X roja y guarda la configuración.</p><br><textarea id="cfgFooter" placeholder="Texto footer"></textarea><br><br><button class="btn green" onclick="saveConfig()">Guardar configuración</button></div></div>
-<div class="admin-section" id="pedidosAdmin"><div class="admin-card"><h3>Pedidos recibidos</h3><button class="btn" onclick="loadOrders()">Actualizar pedidos</button></div><div class="admin-card table-wrap"><table class="admin-table"><thead><tr><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th><th>Stock</th><th>Acción</th></tr></thead><tbody id="ordersTable"></tbody></table></div></div>
-<div class="admin-section" id="analyticsAdmin"><div class="admin-card"><h3>📊 Análisis de ventas</h3><p class="muted">Resumen profesional calculado con pedidos aprobados y entregados.</p><br><button class="btn green" onclick="loadAnalytics()">Actualizar análisis</button> <button class="btn gray" onclick="clearAnalyticsView()">Limpiar análisis</button></div><div id="analyticsContent"></div></div>
-</div></div></div></section>
+
 
 <div class="overlay" id="overlay" onclick="toggleCart()"></div><aside class="cart-sidebar" id="cartSidebar"><div class="cart-header"><h2>Tu carrito</h2><button class="btn danger" onclick="toggleCart()">✕</button></div><div class="cart-items" id="cartItems"></div><div class="cart-footer"><div id="cartEnvioInfo" class="envio-banner hidden"></div><div class="cart-total"><span>Total</span><span id="cartTotal">$0.00</span></div><button class="btn green" style="width:100%" onclick="openCheckout()">Finalizar compra</button></div></aside>
 <div class="modal" id="productModal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle"></h3><button class="btn danger" onclick="closeModal('productModal')">✕</button></div><div class="modal-body" id="productModalBody"></div></div></div>
 <div class="modal" id="checkoutModal"><div class="modal-box" style="max-width:560px"><div class="modal-head"><h3>Finalizar compra</h3><button class="btn danger" onclick="closeModal('checkoutModal')">✕</button></div><div class="modal-body"><input id="clienteNombre" placeholder="Nombre completo"><br><br><input id="clienteTelefono" placeholder="Teléfono"><br><br><textarea id="clienteDireccion" placeholder="Dirección / nota del pedido"></textarea><br><br><button class="btn green" style="width:100%" onclick="checkout()">Enviar pedido</button></div></div></div>
 
-<a class="whatsapp-float" id="whatsappFloat" href="#" target="_blank" rel="noopener" title="Escríbenos por WhatsApp" aria-label="Escríbenos por WhatsApp">☎</a>
+<a class="whatsapp-float" id="whatsappFloat" href="#" target="_blank" rel="noopener" title="Escríbenos por WhatsApp" aria-label="Escríbenos por WhatsApp"><img src="https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/cd68fc97-780b-446f-9f76-a8825dfeada2.png" alt="WhatsApp"></a>
 <div class="notification" id="notification"></div>
 
 <script>
@@ -307,7 +417,11 @@ const SUPABASE_URL = 'https://srnjwctzodpquihndsvs.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNybmp3Y3R6b2RwcXVpaG5kc3ZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNDUyMzgsImV4cCI6MjA5NjcyMTIzOH0.9Z-rF4J66VH7NyF9MxdqGksgsp0HKAu9RfXbp5YLb0A';
 const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const STORAGE_BUCKET = 'productos';
+const HEADER_LOGO_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/136f2e40-f64e-4932-a633-0b0b47dda7f6.png';
+const WHATSAPP_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/cd68fc97-780b-446f-9f76-a8825dfeada2.png';
+const INSTAGRAM_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/image%20(1).png';
 let config = {}, categories = [], products = [], promos = [], cart = [], currentCurrency = 'USD', exchangeRate = 36.5, currentFilter = 'todos', slideIndex = 0, currentModalImages = [], favorites = JSON.parse(localStorage.getItem('calimioyo_favoritos') || '[]');
+let adminProductSearchTerm = '', adminProductCategoryFilter = 'todos', adminProductStockFilter = 'todos';
 let productoImagenesActuales = [], categoriaImagenActual = null, promoImagenActual = null, cfgLogo1Actual = null, cfgLogo2Actual = null, cfgHeroActual = [], heroIntervalId = null;
 const $ = id => document.getElementById(id);
 function notify(msg){ const n=$('notification'); n.textContent=msg; n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),2600); }
@@ -424,6 +538,9 @@ async function init(){
   await loadAll();
   setSpecsForm({});
   $('searchInput').addEventListener('input',()=>renderProducts());
+  $('adminProductSearch')?.addEventListener('input',e=>{ adminProductSearchTerm=e.target.value.trim().toLowerCase(); renderAdminProductsTable(); });
+  $('adminProductCategoryFilter')?.addEventListener('change',e=>{ adminProductCategoryFilter=e.target.value; renderAdminProductsTable(); });
+  $('adminProductStockFilter')?.addEventListener('change',e=>{ adminProductStockFilter=e.target.value; renderAdminProductsTable(); });
   $('pImagenes')?.addEventListener('change',()=>{
     const nuevos=[...$('pImagenes').files];
     if(productoImagenesActuales.length + nuevos.length > 3){ notify('Máximo 3 imágenes por producto. Elimina una imagen o selecciona menos.'); $('pImagenes').value=''; renderProductImagePreview(); return; }
@@ -436,6 +553,7 @@ async function init(){
   $('cfgHero')?.addEventListener('change',()=>{ const nuevos=[...$('cfgHero').files].map(f=>URL.createObjectURL(f)); $('cfgHeroPreview').innerHTML=nuevos.length?nuevos.map((u,i)=>`<div class="preview-slot" title="Nueva ${i+1}">${imgHtml(u)}<button type="button" class="image-remove-btn" onclick="clearConfigFileInput('cfgHero')">×</button></div>`).join(''):'<span class="muted">Sin imágenes nuevas.</span>'; });
   const {data:{session}}=await supa.auth.getSession();
   if(session) showAdminLogged();
+  updateAdminLoginLockMsg();
   if(new URLSearchParams(location.search).get('admin')==='1' || location.hash==='#admin'){ setTimeout(()=>abrirPanelAdminLocal(),350); }
 }
 document.addEventListener('DOMContentLoaded', init);
@@ -469,20 +587,18 @@ async function loadProducts(){
 async function loadPromos(){ const {data}=await supa.from('promociones').select('*').eq('activo',true).order('orden'); promos=data||[]; }
 function renderAll(){ applyConfig(); renderNav(); renderCategories(); renderFilterTabs(); renderProducts(); renderPromos(); renderCart(); fillAdminSelects(); renderAdminTables(); }
 function applyConfig(){
-  $('storeName').textContent=config.nombre_tienda||'CALIMIOYO';
+  if($('mainHeaderLogo')) $('mainHeaderLogo').src=HEADER_LOGO_URL;
   $('heroTitle').textContent=config.slogan||'Construye tus sueños';
   $('heroDesc').textContent=config.descripcion_hero||'';
   $('footerText').textContent=config.footer_text||'';
   $('currencyBtn').textContent=currentCurrency;
   const insta=normalizeInstagram(config.instagram);
   const links=[];
-  if(insta) links.push(`<a href="${insta}" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram">📸</a>`);
+  if(insta) links.push(`<a class="instagram-link" href="${insta}" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><img src="${INSTAGRAM_ICON_URL}" alt="Instagram"></a>`);
   $('footerLinks').innerHTML=links.join('');
   $('footerEnvioText').textContent=textoEnvioGeneral();
   $('envioFeatureText').textContent=textoEnvioGeneral();
   updateWhatsappFloat();
-  if(config.logo_1){$('logo1').src=config.logo_1; $('logo1').style.display='block';}else $('logo1').style.display='none';
-  if(config.logo_2){$('logo2').src=config.logo_2; $('logo2').style.display='block';}else $('logo2').style.display='none';
   const imgs=config.hero_imagenes?.length?config.hero_imagenes:['https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop'];
   $('heroSlider').innerHTML=imgs.map((u,i)=>`<img class="slide ${i===0?'active':''}" src="${u}">`).join('');
   if(heroIntervalId) clearInterval(heroIntervalId);
@@ -687,7 +803,8 @@ function renderCart(){
 function toggleCart(){ $('cartSidebar').classList.toggle('open'); $('overlay').classList.toggle('active'); }
 function openCheckout(){ if(!cart.length)return notify('El carrito está vacío'); $('checkoutModal').classList.add('active'); }
 async function checkout(){ const nombre=$('clienteNombre').value.trim(), telefono=$('clienteTelefono').value.trim(); if(!nombre||!telefono)return notify('Coloca nombre y teléfono'); const total=cart.reduce((s,i)=>s+i.precio*i.qty,0); const pedido={cliente_nombre:nombre,cliente_telefono:telefono,cliente_direccion:$('clienteDireccion').value,items:cart,total_usd:total,total_ves:total*exchangeRate}; await supa.from('pedidos').insert(pedido); const texto=encodeURIComponent(`Hola, quiero hacer este pedido:\n\n${cart.map(i=>`${i.qty} x ${i.nombre} - ${money(i.precio*i.qty)}`).join('\n')}\n\nTotal: ${money(total)}\nNombre: ${nombre}\nTeléfono: ${telefono}\nDirección/nota: ${$('clienteDireccion').value}`); const wa=(config.whatsapp||'').replace(/\D/g,''); if(wa) window.open(`https://wa.me/${wa}?text=${texto}`,'_blank'); cart=[]; renderCart(); closeModal('checkoutModal'); notify('Pedido enviado'); }
-function abrirPanelAdminLocal(){ $('adminPanel').classList.add('active'); $('adminPanel').scrollIntoView({behavior:'smooth'}); }
+function abrirPanelAdminLocal(){ $('adminPanel').classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+function closeAdminPanel(){ $('adminPanel').classList.remove('active'); history.replaceState(null,'',location.pathname); }
 function openAdmin(){
   const url=new URL(window.location.href);
   if(url.searchParams.get('admin')==='1') return abrirPanelAdminLocal();
@@ -695,7 +812,62 @@ function openAdmin(){
   url.hash='admin';
   window.open(url.toString(),'_blank','noopener');
 }
-async function adminLogin(){ const {error}=await supa.auth.signInWithPassword({email:$('adminEmail').value,password:$('adminPass').value}); if(error)return notify(error.message); showAdminLogged(); }
+
+const ADMIN_LOGIN_MAX_ATTEMPTS = 3;
+const ADMIN_LOGIN_LOCK_MS = 10 * 60 * 1000; // 10 minutos
+const ADMIN_LOGIN_ATTEMPTS_KEY = 'calimioyo_admin_login_attempts';
+const ADMIN_LOGIN_LOCK_KEY = 'calimioyo_admin_login_locked_until';
+function getAdminLoginLockedUntil(){ return Number(localStorage.getItem(ADMIN_LOGIN_LOCK_KEY) || 0); }
+function clearAdminLoginBlock(){ localStorage.removeItem(ADMIN_LOGIN_ATTEMPTS_KEY); localStorage.removeItem(ADMIN_LOGIN_LOCK_KEY); updateAdminLoginLockMsg(); }
+function updateAdminLoginLockMsg(){
+  const msg=$('adminLoginLockMsg'), btn=$('adminLoginBtn');
+  if(!msg || !btn) return;
+  const until=getAdminLoginLockedUntil();
+  const left=until-Date.now();
+  if(left>0){
+    const min=Math.ceil(left/60000);
+    msg.textContent=`Login bloqueado temporalmente. Intenta de nuevo en ${min} minuto(s).`;
+    btn.disabled=true;
+    btn.classList.add('gray');
+  }else{
+    if(until) clearAdminLoginBlock();
+    const attempts=Number(localStorage.getItem(ADMIN_LOGIN_ATTEMPTS_KEY)||0);
+    msg.textContent=attempts>0 ? `Intentos fallidos: ${attempts}/${ADMIN_LOGIN_MAX_ATTEMPTS}` : '';
+    btn.disabled=false;
+    btn.classList.remove('gray');
+  }
+}
+function isAdminLoginBlocked(){
+  updateAdminLoginLockMsg();
+  return getAdminLoginLockedUntil() > Date.now();
+}
+function registerFailedAdminLogin(){
+  let attempts=Number(localStorage.getItem(ADMIN_LOGIN_ATTEMPTS_KEY)||0)+1;
+  if(attempts>=ADMIN_LOGIN_MAX_ATTEMPTS){
+    localStorage.setItem(ADMIN_LOGIN_LOCK_KEY, String(Date.now()+ADMIN_LOGIN_LOCK_MS));
+    localStorage.removeItem(ADMIN_LOGIN_ATTEMPTS_KEY);
+    notify('Demasiados intentos. Login bloqueado por 10 minutos.');
+  }else{
+    localStorage.setItem(ADMIN_LOGIN_ATTEMPTS_KEY, String(attempts));
+    notify(`Datos incorrectos. Te quedan ${ADMIN_LOGIN_MAX_ATTEMPTS-attempts} intento(s).`);
+  }
+  updateAdminLoginLockMsg();
+}
+async function adminLogin(){
+  if(isAdminLoginBlocked()) return notify('Login bloqueado temporalmente');
+  const btn=$('adminLoginBtn');
+  if(btn) btn.disabled=true;
+  const email=$('adminEmail').value.trim();
+  const password=$('adminPass').value;
+  if(!email || !password){ if(btn) btn.disabled=false; return notify('Coloca correo y contraseña'); }
+  const {error}=await supa.auth.signInWithPassword({email,password});
+  if(btn) btn.disabled=false;
+  if(error){ registerFailedAdminLogin(); return; }
+  clearAdminLoginBlock();
+  showAdminLogged();
+}
+setInterval(updateAdminLoginLockMsg, 30000);
+
 function showAdminLogged(){ $('loginBox').classList.add('hidden'); $('adminContent').classList.remove('hidden'); loadOrders(); loadAnalytics(); }
 async function adminLogout(){ await supa.auth.signOut(); $('loginBox').classList.remove('hidden'); $('adminContent').classList.add('hidden'); }
 function showAdminTab(id){ document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); if(id==='analyticsAdmin') loadAnalytics(); if(id==='pedidosAdmin') loadOrders(); }
@@ -714,15 +886,67 @@ async function deleteStorageUrls(urls){
   const {error}=await supa.storage.from(STORAGE_BUCKET).remove(paths);
   if(error) notify('No se pudo borrar una imagen de Storage: '+error.message);
 }
-function fillAdminSelects(){ const cats=visibleCategories(); $('pCategoria').innerHTML=cats.map(c=>`<option value="${c.slug}">${c.nombre}</option>`).join(''); }
+function adminCategoryOptions(){
+  const map=new Map();
+  categories.forEach(c=>map.set(String(c.slug||'').trim(), c.nombre||c.slug));
+  products.forEach(p=>{ const slug=String(p.categoria||'').trim(); if(slug && !map.has(slug)) map.set(slug, slug); });
+  return [...map.entries()].filter(([slug])=>slug).sort((a,b)=>String(a[1]).localeCompare(String(b[1]),'es'));
+}
+function fillAdminSelects(){
+  const cats=adminCategoryOptions();
+  if($('pCategoria')) $('pCategoria').innerHTML=cats.map(([slug,nombre])=>`<option value="${slug}">${nombre}</option>`).join('');
+  if($('adminProductCategoryFilter')) $('adminProductCategoryFilter').innerHTML='<option value="todos">Todas las categorías</option>'+cats.map(([slug,nombre])=>`<option value="${slug}">${nombre}</option>`).join('');
+}
+function adminProductMatches(p){
+  const q=adminProductSearchTerm;
+  const cat=adminProductCategoryFilter;
+  const stockFilter=adminProductStockFilter;
+  if(cat!=='todos' && String(p.categoria||'')!==cat) return false;
+  const stock=Number(p.stock||0);
+  if(stockFilter==='activo' && p.activo===false) return false;
+  if(stockFilter==='oculto' && p.activo!==false) return false;
+  if(stockFilter==='oferta' && !p.oferta) return false;
+  if(stockFilter==='bajo' && !(stock>0 && stock<=5)) return false;
+  if(stockFilter==='agotado' && stock>0) return false;
+  if(!q) return true;
+  const txt=[p.nombre,p.categoria,p.descripcion,p.badge,p.id,p.codigo,p.sku,p.referencia].map(x=>String(x||'').toLowerCase()).join(' ');
+  return txt.includes(q);
+}
+function renderAdminProductsTable(){
+  const tbody=$('adminProductsTable');
+  if(!tbody) return;
+  const filtrados=products.filter(adminProductMatches).sort((a,b)=>String(a.categoria||'').localeCompare(String(b.categoria||''),'es') || String(a.nombre||'').localeCompare(String(b.nombre||''),'es'));
+  const hayFiltro=adminProductSearchTerm || adminProductCategoryFilter!=='todos' || adminProductStockFilter!=='todos';
+  const max=hayFiltro ? 500 : 150;
+  const visibles=filtrados.slice(0,max);
+  const counter=$('adminProductCounter');
+  if(counter){
+    counter.textContent=`Mostrando ${visibles.length} de ${filtrados.length} producto(s)` + (!hayFiltro && filtrados.length>max ? ' · Usa la búsqueda para encontrar uno rápido.' : '');
+  }
+  tbody.innerHTML=visibles.length?visibles.map(p=>{
+    const activo=p.activo!==false;
+    const stock=Number(p.stock||0);
+    const stockClass=stock<=0?'stock-low':'';
+    const estado=activo?'Activo':'Oculto';
+    return `<tr><td><div style="display:flex;gap:4px;flex-wrap:wrap">${productImages(p).map(u=>imgHtml(u,'preview-img')).join('')}</div><span class="muted">${productImages(p).filter(u=>String(u).startsWith('http')).length}/3 imágenes</span></td><td class="product-name-cell"><b>${p.nombre||''}</b><br><span class="muted">${p.categoria||''}</span><br><span class="admin-pill ${activo?'':'off'}">${estado}</span>${p.oferta?'<span class="admin-pill offer">Oferta</span>':''}</td><td>${money(p.precio||0)}</td><td><span class="${stockClass}">${p.stock??0}</span></td><td><div class="admin-actions"><button class="btn" onclick="editProduct('${p.id}')">Editar</button><button class="btn danger" onclick="deleteProduct('${p.id}')">Borrar</button></div></td></tr>`;
+  }).join(''):`<tr><td colspan="5">No encontré productos con esa búsqueda.</td></tr>`;
+}
+function clearAdminProductSearch(){
+  adminProductSearchTerm=''; adminProductCategoryFilter='todos'; adminProductStockFilter='todos';
+  if($('adminProductSearch')) $('adminProductSearch').value='';
+  if($('adminProductCategoryFilter')) $('adminProductCategoryFilter').value='todos';
+  if($('adminProductStockFilter')) $('adminProductStockFilter').value='todos';
+  renderAdminProductsTable();
+}
 function renderAdminTables(){
-  $('adminProductsTable').innerHTML=products.map(p=>`<tr><td><div style="display:flex;gap:4px;flex-wrap:wrap">${productImages(p).map(u=>imgHtml(u,'preview-img')).join('')}</div><span class="muted">${productImages(p).filter(u=>String(u).startsWith('http')).length}/3 imágenes</span></td><td><b>${p.nombre}</b><br><span class="muted">${p.categoria}</span></td><td>${money(p.precio)}</td><td>${p.stock}</td><td><button class="btn" onclick="editProduct('${p.id}')">Editar</button> <button class="btn danger" onclick="deleteProduct('${p.id}')">Borrar</button></td></tr>`).join('');
+  fillAdminSelects();
+  renderAdminProductsTable();
   $('adminCategoriesTable').innerHTML=categories.map(c=>`<tr><td>${categoryVisual(c,'preview-img')}</td><td>${c.nombre}</td><td>${c.slug}</td><td><button class="btn" onclick="editCategory('${c.id}')">Editar</button> <button class="btn danger" onclick="deleteCategory('${c.id}')">Borrar</button></td></tr>`).join('');
   $('adminPromosTable').innerHTML=promos.map(p=>`<tr><td>${imgHtml(p.imagen,'preview-img')}</td><td><b>${p.titulo}</b><br>${p.descripcion||''}</td><td><button class="btn" onclick="editPromo('${p.id}')">Editar</button> <button class="btn danger" onclick="deletePromo('${p.id}')">Borrar</button></td></tr>`).join('');
   fillConfigForm();
 }
-function clearProductForm(){ ['productId','pNombre','pPrecio','pOriginal','pStock','pBadge','pDescripcion'].forEach(id=>$(id).value=''); productoImagenesActuales=[]; setSpecsForm({}); $('pActivo').value='true'; $('pOferta').value='false'; $('pImagenes').value=''; renderProductImagePreview(); $('productFormTitle').textContent='Agregar producto'; }
-function editProduct(id){ const p=products.find(x=>String(x.id)===String(id)); if(!p)return; $('productId').value=p.id; $('pNombre').value=p.nombre||''; $('pCategoria').value=p.categoria||''; $('pPrecio').value=p.precio||0; $('pOriginal').value=p.precio_original||''; $('pStock').value=p.stock||0; $('pBadge').value=p.badge||''; $('pDescripcion').value=p.descripcion||''; setSpecsForm(p.especificaciones||{}); $('pActivo').value=String(p.activo); $('pOferta').value=String(p.oferta); $('pImagenes').value=''; productoImagenesActuales=(Array.isArray(p.imagenes)?p.imagenes.filter(Boolean):[]).slice(0,3); renderProductImagePreview(); $('productFormTitle').textContent='Editar producto'; showAdminTab('productosAdmin'); }
+function clearProductForm(){ ['productId','pNombre','pPrecio','pOriginal','pStock','pBadge','pDescripcion'].forEach(id=>$(id).value=''); productoImagenesActuales=[]; setSpecsForm({}); $('pActivo').value='true'; $('pOferta').value='false'; $('pImagenes').value=''; renderProductImagePreview(); $('productFormTitle').textContent='Agregar producto'; $('productFormCard')?.scrollIntoView({behavior:'smooth',block:'start'}); }
+function editProduct(id){ const p=products.find(x=>String(x.id)===String(id)); if(!p)return; $('productId').value=p.id; $('pNombre').value=p.nombre||''; $('pCategoria').value=p.categoria||''; $('pPrecio').value=p.precio||0; $('pOriginal').value=p.precio_original||''; $('pStock').value=p.stock||0; $('pBadge').value=p.badge||''; $('pDescripcion').value=p.descripcion||''; setSpecsForm(p.especificaciones||{}); $('pActivo').value=String(p.activo!==false); $('pOferta').value=String(!!p.oferta); $('pImagenes').value=''; productoImagenesActuales=(Array.isArray(p.imagenes)?p.imagenes.filter(Boolean):[]).slice(0,3); renderProductImagePreview(); $('productFormTitle').textContent='Editar producto'; showAdminTab('productosAdmin'); $('productFormCard')?.scrollIntoView({behavior:'smooth',block:'start'}); }
 async function saveProduct(){
   const specs=getSpecsFromForm();
   const nuevos=[...$('pImagenes').files];
