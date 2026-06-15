@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <title>Ferretería CALIMIOYO | Herramientas, electricidad y construcción</title>
-<meta name="description" content="Ferretería CALIMIOYO: herramientas, electricidad, conexiones, tornillería, pintura, riego, repuestos y materiales de construcción. Atención por WhatsApp.">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://ferreteriacalimioyo.com/">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ferretería CALIMIOYO en Prebo Valencia Carabobo | Herramientas y construcción</title>
 <meta name="description" content="Ferretería CALIMIOYO en Prebo, Valencia, estado Carabobo. Venta de herramientas, electricidad, conexiones, tornillería, pintura, riego, repuestos y materiales de construcción. Atención por WhatsApp.">
 <meta name="keywords" content="ferretería en Valencia, ferretería en Prebo, ferretería Carabobo, herramientas Valencia, materiales de construcción Valencia, electricidad, tornillería, pintura, riego">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://ferreteriacalimioyo.com/">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 async function loadAnalytics(){
   const box = $('analyticsContent');
@@ -581,7 +579,7 @@ async function loadAnalytics(){
 <section class="hero" id="inicio"><div class="slider" id="heroSlider"></div><div class="container hero-content"><h1 id="heroTitle">Construye tus sueños</h1><p id="heroDesc">Productos para profesionales y hogar.</p><a href="#productos" class="btn green">Ver catálogo</a></div></section>
 <section class="section white"><div class="container"><h2 class="section-title">Categorías</h2><div class="grid category-grid" id="categoryGrid"></div></div></section>
 <section class="section" id="promociones"><div class="container"><h2 class="section-title">Promociones</h2><div class="grid products-grid" id="promoGrid"></div></div></section>
-<section class="section" id="productos"><div class="container"><h2 class="section-title">Productos</h2><div class="filter-tabs" id="filterTabs"><button class="filter-btn active" onclick="filterProducts('todos')">Todos</button><button class="filter-btn" onclick="filterProducts('ofertas')">Ofertas</button></div><div id="searchResultNotice" class="search-result-notice hidden"></div><div class="grid products-grid" id="productsGrid"></div></div></section>
+<section class="section" id="productos"><div class="container"><h2 class="section-title">Productos</h2><div class="filter-tabs" id="filterTabs"><button class="filter-btn active" onclick="filterProducts('todos')">Todos</button><button class="filter-btn" onclick="filterProducts('ofertas')">Ofertas</button></div><div id="searchResultNotice" class="search-result-notice hidden"></div><div class="grid products-grid" id="productsGrid"></div><div id="loadMoreBox" style="text-align:center;margin-top:24px"></div></div></section>
 <section class="section features"><div class="container"><div class="grid features-grid"><div><div class="feature-icon">🚚</div><h3>Envío rápido</h3><p id="envioFeatureText">Entrega según zona</p></div><div><div class="feature-icon">🔒</div><h3>Pago seguro</h3><p>Pedido por WhatsApp</p></div><div><div class="feature-icon">💬</div><h3>Atención</h3><p>Asesoría personalizada</p></div></div></div></section>
 <footer><div class="container"><p id="footerText"></p><div class="footer-links" id="footerLinks"></div><p class="muted" id="footerEnvioText" style="color:#d1d5db"></p><div class="admin-footer-area"><button class="btn green admin-toggle" onclick="openAdmin()" title="Admin" aria-label="Admin">⚙️</button></div></div></footer>
 
@@ -603,6 +601,7 @@ const HEADER_LOGO_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/obj
 const WHATSAPP_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/cd68fc97-780b-446f-9f76-a8825dfeada2.png';
 const INSTAGRAM_ICON_URL = 'https://srnjwctzodpquihndsvs.supabase.co/storage/v1/object/public/png/image%20(1).png';
 let config = {}, categories = [], products = [], promos = [], cart = [], currentCurrency = 'USD', exchangeRate = 36.5, currentFilter = 'todos', slideIndex = 0, currentModalImages = [], favorites = JSON.parse(localStorage.getItem('calimioyo_favoritos') || '[]');
+let productPage = 0, productPageSize = 48, productsTotal = 0, productsQueryLoading = false, allProductsLoadedForAdmin = false;
 let adminProductSearchTerm = '', adminProductCategoryFilter = 'todos', adminProductStockFilter = 'todos';
 let mainSearchScrollTimer = null, mainSearchRenderTimer = null;
 let productoImagenesActuales = [], categoriaImagenActual = null, promoImagenActual = null, cfgLogo1Actual = null, cfgLogo2Actual = null, cfgHeroActual = [], heroIntervalId = null;
@@ -618,7 +617,7 @@ function hidePageLoader(){
 function money(usd){ if(currentCurrency==='VES') return 'Bs. '+Number(usd*exchangeRate).toLocaleString('es-VE',{minimumFractionDigits:2,maximumFractionDigits:2}); return '$'+Number(usd).toFixed(2); }
 function productImages(p){ const arr=Array.isArray(p?.imagenes)?p.imagenes.filter(Boolean):[]; return (arr.length?arr:['🛠️']).slice(0,3); }
 function firstImage(arr){ return Array.isArray(arr)&&arr.filter(Boolean).length ? arr.filter(Boolean)[0] : '🛠️'; }
-function imgHtml(src, cls=''){ if(!src) return '🛠️'; return String(src).startsWith('http') ? `<img class="${cls}" src="${src}" alt="">` : src; }
+function imgHtml(src, cls=''){ if(!src) return '🛠️'; return String(src).startsWith('http') ? `<img class="${cls}" src="${src}" alt="" loading="lazy" decoding="async">` : src; }
 function escapeAttr(value){ return String(value ?? '').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll("'",'&#039;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 function categoryVisual(c, cls=''){ return c?.imagen ? `<img class="${cls}" src="${c.imagen}" alt="${escapeAttr(c.nombre||'Categoría')}">` : (c?.icono || '🛠️'); }
 function isFavorite(id){ return favorites.includes(String(id)); }
@@ -739,26 +738,21 @@ function handleMainSearchInput(){
   if(mainSearchRenderTimer) clearTimeout(mainSearchRenderTimer);
   if(mainSearchScrollTimer) clearTimeout(mainSearchScrollTimer);
 
-  // En teléfono, filtrar miles de productos en cada tecla puede sentirse pegado.
-  // Por eso esperamos un poquito hasta que la persona deje de escribir.
   if(q && notice){
     notice.classList.remove('hidden');
     notice.textContent = '🔎 Buscando productos...';
   }
 
-  if(!q){
-    renderProducts();
-    return;
-  }
-
-  mainSearchRenderTimer = setTimeout(()=>{
-    renderProducts();
-    mainSearchScrollTimer = setTimeout(()=>{
-      const target = $('searchResultNotice') || $('productsGrid') || $('productos');
-      const isMobile = window.matchMedia('(max-width:650px)').matches;
-      target?.scrollIntoView({behavior:isMobile ? 'auto' : 'smooth', block:'start'});
-    }, 80);
-  }, 450);
+  mainSearchRenderTimer = setTimeout(async ()=>{
+    await loadProducts({append:false, render:true});
+    if(q){
+      mainSearchScrollTimer = setTimeout(()=>{
+        const target = $('searchResultNotice') || $('productsGrid') || $('productos');
+        const isMobile = window.matchMedia('(max-width:650px)').matches;
+        target?.scrollIntoView({behavior:isMobile ? 'auto' : 'smooth', block:'start'});
+      }, 80);
+    }
+  }, q ? 550 : 120);
 }
 
 async function init(){
@@ -789,12 +783,52 @@ async function init(){
 }
 document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('load',()=>setTimeout(hidePageLoader,12000));
-async function loadAll(){ await Promise.all([loadConfig(),loadCategories(),loadProducts(),loadPromos()]); renderAll(); }
+async function loadAll(){
+  await Promise.all([loadConfig(),loadCategories(),loadPromos()]);
+  await loadProducts({append:false, render:false});
+  renderAll();
+}
 async function loadConfig(){ const {data,error}=await supa.from('tienda_config').select('*').eq('id',1).single(); if(!error && data){config=data; exchangeRate=Number(data.tasa||36.5); currentCurrency=data.moneda_default||'USD';}}
 async function loadCategories(){ const {data}=await supa.from('categorias').select('*').eq('activo',true).order('orden'); categories=data||[]; }
-async function loadProducts(){
-  // Supabase puede devolver máximo 1000 filas por consulta.
-  // Como tu inventario tiene más de 2000 productos, los cargamos por páginas.
+function cleanSearchForSupabase(value){ return String(value||'').trim().replace(/[%,()]/g,' ').replace(/\s+/g,' ').slice(0,80); }
+async function loadProducts({append=false, render=true}={}){
+  // Optimización móvil: no cargamos los 2,000+ productos al iniciar.
+  // Solo traemos 48 por página y pedimos más cuando el cliente toca "Ver más".
+  if(productsQueryLoading) return;
+  productsQueryLoading=true;
+  const q=cleanSearchForSupabase($('searchInput')?.value || '');
+  if(!append){ productPage=0; products=[]; }
+  const from=productPage * productPageSize;
+  const to=from + productPageSize - 1;
+  let query=supa
+    .from('productos')
+    .select('*',{count:'exact'})
+    .eq('activo',true)
+    .order('orden',{ascending:true})
+    .range(from,to);
+  if(currentFilter==='__ofertas__') query=query.eq('oferta',true);
+  else if(currentFilter!=='todos') query=query.eq('categoria',currentFilter);
+  if(q){
+    query=query.or(`nombre.ilike.%${q}%,descripcion.ilike.%${q}%,categoria.ilike.%${q}%,badge.ilike.%${q}%`);
+  }
+  const {data,error,count}=await query;
+  if(error){
+    console.error('Error cargando productos:', error);
+    notify(error.message || 'Error cargando productos');
+    productsQueryLoading=false;
+    return;
+  }
+  productsTotal = Number(count ?? (data||[]).length);
+  products = append ? [...products, ...(data||[])] : (data||[]);
+  productsQueryLoading=false;
+  if(render) renderProducts();
+}
+async function loadMoreProducts(){
+  if(products.length >= productsTotal) return;
+  productPage += 1;
+  await loadProducts({append:true, render:true});
+}
+async function loadAllProductsForAdmin(render=true){
   const all=[];
   const pageSize=1000;
   let from=0;
@@ -804,20 +838,18 @@ async function loadProducts(){
       .select('*')
       .order('orden',{ascending:true})
       .range(from, from + pageSize - 1);
-    if(error){
-      console.error('Error cargando productos:', error);
-      notify(error.message || 'Error cargando productos');
-      break;
-    }
+    if(error){ notify(error.message || 'Error cargando inventario admin'); break; }
     all.push(...(data||[]));
     if(!data || data.length < pageSize) break;
     from += pageSize;
   }
   products=all;
-  console.log('Productos cargados:', products.length, 'Categorías:', [...new Set(products.map(p=>p.categoria))]);
+  productsTotal=all.length;
+  allProductsLoadedForAdmin=true;
+  if(render){ fillAdminSelects(); renderAdminTables(); }
 }
 async function loadPromos(){ const {data}=await supa.from('promociones').select('*').eq('activo',true).order('orden'); promos=data||[]; }
-function renderAll(){ applyConfig(); renderNav(); renderCategories(); renderFilterTabs(); renderProducts(); renderPromos(); renderCart(); fillAdminSelects(); renderAdminTables(); }
+function renderAll(){ applyConfig(); renderNav(); renderCategories(); renderFilterTabs(); renderProducts(); renderPromos(); renderCart(); fillAdminSelects(); if(!$('adminContent')?.classList.contains('hidden')) renderAdminTables(); }
 function applyConfig(){
   if($('mainHeaderLogo')) $('mainHeaderLogo').src=HEADER_LOGO_URL;
   $('heroTitle').textContent=config.slogan||'Construye tus sueños';
@@ -833,7 +865,7 @@ function applyConfig(){
   updateWhatsappFloat();
   updateInstagramFloat();
   const imgs=config.hero_imagenes?.length?config.hero_imagenes:['https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop'];
-  $('heroSlider').innerHTML=imgs.map((u,i)=>`<img class="slide ${i===0?'active':''}" src="${u}">`).join('');
+  $('heroSlider').innerHTML=imgs.map((u,i)=>`<img class="slide ${i===0?'active':''}" src="${u}" ${i===0?'loading="eager" fetchpriority="high"':'loading="lazy"'} decoding="async">`).join('');
   if(heroIntervalId) clearInterval(heroIntervalId);
   slideIndex=0;
   heroIntervalId=setInterval(()=>{const slides=document.querySelectorAll('.slide'); if(!slides.length)return; slides[slideIndex]?.classList.remove('active'); slideIndex=(slideIndex+1)%slides.length; slides[slideIndex]?.classList.add('active');},3500);
@@ -867,26 +899,27 @@ const CATEGORY_META = {
 };
 function activeProducts(){ return products.filter(p=>p.activo!==false); }
 function titleFromSlug(slug){ return String(slug||'').split('-').filter(Boolean).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ') || 'Categoría'; }
-function hasProductsInCategory(slug){ return activeProducts().some(p=>String(p.categoria||'').trim()===String(slug).trim()); }
 function visibleCategories(){
-  const slugs=[...new Set(activeProducts().map(p=>String(p.categoria||'').trim()).filter(Boolean))];
-  const dbCats=new Map(categories.map(c=>[String(c.slug||'').trim(),c]));
-  return slugs.map((slug,i)=>{
-    const db=dbCats.get(slug)||{};
+  const base = categories.length
+    ? categories
+    : Object.entries(CATEGORY_META).map(([slug,meta])=>({slug,...meta,activo:true}));
+  return base.map((c,i)=>{
+    const slug=String(c.slug||'').trim();
     const meta=CATEGORY_META[slug]||{};
     return {
-      ...db,
+      ...c,
       slug,
-      nombre:db.nombre||meta.nombre||titleFromSlug(slug),
-      descripcion:db.descripcion||meta.descripcion||'',
-      icono:db.icono||meta.icono||'🛠️',
-      imagen:db.imagen||null,
-      orden:Number(db.orden ?? meta.orden ?? (900+i)),
-      activo:true
+      nombre:c.nombre||meta.nombre||titleFromSlug(slug),
+      descripcion:c.descripcion||meta.descripcion||'',
+      icono:c.icono||meta.icono||'🛠️',
+      imagen:c.imagen||null,
+      orden:Number(c.orden ?? meta.orden ?? (900+i)),
+      activo:c.activo!==false
     };
-  }).sort((a,b)=>Number(a.orden||0)-Number(b.orden||0) || String(a.nombre).localeCompare(String(b.nombre),'es'));
+  }).filter(c=>c.slug && c.activo!==false)
+    .sort((a,b)=>Number(a.orden||0)-Number(b.orden||0) || String(a.nombre).localeCompare(String(b.nombre),'es'));
 }
-function hasOfferProducts(){ return activeProducts().some(p=>p.oferta===true); }
+function hasOfferProducts(){ return true; }
 function renderNav(){
   const cats=visibleCategories();
   $('navLinks').innerHTML='<li><a href="#inicio" class="active">Inicio</a></li><li><a href="#productos">Productos</a></li>'+cats.map(c=>`<li><a href="#productos" onclick="filterProducts('${c.slug}')">${c.nombre}</a></li>`).join('');
@@ -900,13 +933,7 @@ function renderFilterTabs(){
   const ofertaBtn = hasOfferProducts() ? `<button class="filter-btn ${currentFilter==='__ofertas__'?'active':''}" onclick="filterProducts('__ofertas__')">Ofertas</button>` : '';
   $('filterTabs').innerHTML=`<button class="filter-btn ${currentFilter==='todos'?'active':''}" onclick="filterProducts('todos')">Todos</button>${ofertaBtn}`+cats.map(c=>`<button class="filter-btn ${currentFilter===c.slug?'active':''}" onclick="filterProducts('${c.slug}')">${c.nombre}</button>`).join('');
 }
-function productVisible(p){
-  if(p.activo===false) return false;
-  const q=$('searchInput').value.trim().toLowerCase();
-  const matchQ=!q || (p.nombre||'').toLowerCase().includes(q) || (p.descripcion||'').toLowerCase().includes(q) || (p.categoria||'').toLowerCase().includes(q);
-  const matchF=currentFilter==='todos'||(currentFilter==='__ofertas__'&&p.oferta===true)||String(p.categoria||'')===String(currentFilter);
-  return matchQ&&matchF;
-}
+function productVisible(p){ return p && p.activo!==false; }
 function renderProducts(){
   renderFilterTabs();
   const list=products.filter(productVisible);
@@ -915,7 +942,7 @@ function renderProducts(){
   if(notice){
     if(q){
       notice.classList.remove('hidden');
-      notice.textContent = list.length ? `🔎 ${list.length} producto(s) encontrado(s) para: ${q}` : `No se encontraron productos para: ${q}`;
+      notice.textContent = productsTotal ? `🔎 ${productsTotal} producto(s) encontrado(s) para: ${q}` : `No se encontraron productos para: ${q}`;
     }else{
       notice.classList.add('hidden');
       notice.textContent='';
@@ -948,9 +975,17 @@ function renderProducts(){
     </div>
   </div>`;
   }).join('') || '<p>No hay productos para mostrar.</p>';
+  const more=$('loadMoreBox');
+  if(more){
+    if(products.length < productsTotal){
+      more.innerHTML=`<button class="btn green" onclick="loadMoreProducts()">Ver más productos (${products.length} de ${productsTotal})</button>`;
+    }else{
+      more.innerHTML=productsTotal>0 ? `<p class="muted">Mostrando ${products.length} producto(s).</p>` : '';
+    }
+  }
 }
 function renderPromos(){ $('promoGrid').innerHTML=promos.map(p=>`<div class="promo-card"><div class="product-img">${imgHtml(p.imagen)}</div><h3>${p.titulo}</h3><p>${p.descripcion||''}</p><br><button class="btn green" onclick="document.querySelector('#productos').scrollIntoView({behavior:'smooth'})">${p.boton_texto||'Ver promoción'}</button></div>`).join('') || '<p class="muted">No hay promociones activas.</p>'; }
-function filterProducts(cat){ currentFilter=cat; renderProducts(); document.querySelector('#productos').scrollIntoView({behavior:'smooth'}); }
+async function filterProducts(cat){ currentFilter=cat; await loadProducts({append:false, render:true}); document.querySelector('#productos').scrollIntoView({behavior:'smooth'}); }
 function toggleCurrency(){ currentCurrency=currentCurrency==='USD'?'VES':'USD'; $('currencyBtn').textContent=currentCurrency; renderProducts(); renderCart(); }
 function openProduct(id){
   const p=products.find(x=>x.id===id); if(!p)return;
@@ -1112,9 +1147,9 @@ async function adminLogin(){
 }
 setInterval(updateAdminLoginLockMsg, 30000);
 
-function showAdminLogged(){ $('loginBox').classList.add('hidden'); $('adminContent').classList.remove('hidden'); loadOrders(); loadAnalytics(); }
+function showAdminLogged(){ $('loginBox').classList.add('hidden'); $('adminContent').classList.remove('hidden'); loadAllProductsForAdmin().then(()=>{ loadOrders(); loadAnalytics(); }); }
 async function adminLogout(){ await supa.auth.signOut(); $('loginBox').classList.remove('hidden'); $('adminContent').classList.add('hidden'); }
-function showAdminTab(id){ document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); if(id==='analyticsAdmin') loadAnalytics(); if(id==='pedidosAdmin') loadOrders(); }
+function showAdminTab(id){ document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); if(id==='productosAdmin' && !allProductsLoadedForAdmin) loadAllProductsForAdmin(); if(id==='analyticsAdmin') loadAnalytics(); if(id==='pedidosAdmin') loadOrders(); }
 async function uploadFiles(inputId){ const files=[...$(inputId).files]; const urls=[]; for(const file of files){ const path=`${Date.now()}-${file.name.replace(/\s+/g,'-')}`; const {error}=await supa.storage.from(STORAGE_BUCKET).upload(path,file,{upsert:true}); if(error){notify(error.message);continue;} const {data}=supa.storage.from(STORAGE_BUCKET).getPublicUrl(path); urls.push(data.publicUrl); } return urls; }
 function storagePathFromPublicUrl(url){
   const value=String(url||'');
