@@ -544,6 +544,109 @@ async function loadAnalytics(){
     }
   </style>
 
+
+  <style>
+    /* Teléfono: categorías y productos en 2 por fila */
+    @media(max-width:650px){
+      .container{padding:0 10px!important}
+      .category-grid,
+      .products-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr))!important;
+        gap:12px!important;
+      }
+      .category-card{
+        border-radius:14px!important;
+      }
+      .category-icon{
+        height:105px!important;
+      }
+      .category-card h3{
+        font-size:.95rem!important;
+        line-height:1.15!important;
+        padding:0 8px!important;
+      }
+      .category-card p{
+        font-size:.78rem!important;
+        line-height:1.25!important;
+        padding:0 8px 12px!important;
+      }
+      .product-card{
+        border-radius:14px!important;
+      }
+      .product-img{
+        height:130px!important;
+        font-size:2.4rem!important;
+      }
+      .product-info{
+        padding:10px!important;
+      }
+      .product-cat{
+        font-size:.68rem!important;
+        line-height:1.1!important;
+      }
+      .product-title{
+        font-size:.9rem!important;
+        line-height:1.18!important;
+        min-height:2.15em!important;
+      }
+      .price{
+        font-size:1.05rem!important;
+        margin:6px 0!important;
+      }
+      .old{
+        font-size:.72rem!important;
+      }
+      .product-info .muted{
+        font-size:.74rem!important;
+        line-height:1.2!important;
+      }
+      .product-actions{
+        gap:6px!important;
+      }
+      .product-actions .btn{
+        padding:8px 8px!important;
+        font-size:.82rem!important;
+        flex:1!important;
+      }
+      .wishlist-card{
+        min-width:36px!important;
+        height:36px!important;
+        font-size:1rem!important;
+      }
+      .card-buy-row{
+        gap:6px!important;
+      }
+      .card-qty-box{
+        height:36px!important;
+      }
+      .card-qty-box button{
+        width:28px!important;
+        height:36px!important;
+      }
+      .card-qty-box input{
+        width:32px!important;
+        height:36px!important;
+      }
+      .card-buy-row .btn{
+        padding:8px 7px!important;
+        font-size:.78rem!important;
+      }
+      .badge{
+        font-size:.68rem!important;
+        padding:4px 7px!important;
+      }
+    }
+    @media(max-width:380px){
+      .category-grid,
+      .products-grid{gap:10px!important}
+      .category-icon{height:92px!important}
+      .product-img{height:115px!important}
+      .product-title{font-size:.84rem!important}
+      .price{font-size:.98rem!important}
+      .card-buy-row .btn{font-size:.72rem!important}
+    }
+  </style>
+
 </head>
 <body>
 <div class="page-loader" id="pageLoader">
