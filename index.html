@@ -647,6 +647,29 @@ async function loadAnalytics(){
     }
   </style>
 
+
+  <style>
+    /* Enlaces legales del footer */
+    .legal-footer-links{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+      margin:14px 0 8px;
+    }
+    .legal-footer-links a{
+      color:white;
+      text-decoration:none;
+      background:rgba(255,255,255,.12);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:.9rem;
+    }
+    .legal-footer-links a:hover{background:rgba(255,255,255,.22)}
+  </style>
+
 </head>
 <body>
 <div class="page-loader" id="pageLoader">
@@ -684,7 +707,7 @@ async function loadAnalytics(){
 <section class="section" id="promociones"><div class="container"><h2 class="section-title">Promociones</h2><div class="grid products-grid" id="promoGrid"></div></div></section>
 <section class="section" id="productos"><div class="container"><h2 class="section-title">Productos</h2><div class="filter-tabs" id="filterTabs"><button class="filter-btn active" onclick="filterProducts('todos')">Todos</button><button class="filter-btn" onclick="filterProducts('ofertas')">Ofertas</button></div><div id="searchResultNotice" class="search-result-notice hidden"></div><div class="grid products-grid" id="productsGrid"></div><div id="loadMoreBox" style="text-align:center;margin-top:24px"></div></div></section>
 <section class="section features"><div class="container"><div class="grid features-grid"><div><div class="feature-icon">🚚</div><h3>Envío rápido</h3><p id="envioFeatureText">Entrega según zona</p></div><div><div class="feature-icon">🔒</div><h3>Pago seguro</h3><p>Pedido por WhatsApp</p></div><div><div class="feature-icon">💬</div><h3>Atención</h3><p>Asesoría personalizada</p></div></div></div></section>
-<footer><div class="container"><p id="footerText"></p><div class="footer-links" id="footerLinks"></div><p class="muted" id="footerEnvioText" style="color:#d1d5db"></p><div class="admin-footer-area"><button class="btn green admin-toggle" onclick="openAdmin()" title="Admin" aria-label="Admin">⚙️</button></div></div></footer>
+<footer><div class="container"><p id="footerText"></p><div class="footer-links" id="footerLinks"></div><div class="legal-footer-links"><a href="privacidad.html">Política de Privacidad</a><a href="aviso-legal.html">Aviso Legal</a><a href="cambios-devoluciones.html">Cambios y Devoluciones</a></div><p class="muted" id="footerEnvioText" style="color:#d1d5db"></p><div class="admin-footer-area"><button class="btn green admin-toggle" onclick="openAdmin()" title="Admin" aria-label="Admin">⚙️</button></div></div></footer>
 
 
 <div class="overlay" id="overlay" onclick="toggleCart()"></div><aside class="cart-sidebar" id="cartSidebar"><div class="cart-header"><h2>Tu carrito</h2><button class="btn danger" onclick="toggleCart()">✕</button></div><div class="cart-items" id="cartItems"></div><div class="cart-footer"><div id="cartEnvioInfo" class="envio-banner hidden"></div><div class="cart-total"><span>Total</span><span id="cartTotal">$0.00</span></div><button class="btn green" style="width:100%" onclick="openCheckout()">Finalizar compra</button></div></aside>
