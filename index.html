@@ -1460,12 +1460,27 @@ async function saveProduct(){
   const imgs=(await uploadFiles('pImagenes')).slice(0,3);
   const finalImages=[...productoImagenesActuales,...imgs].filter(Boolean).slice(0,3);
   const row={nombre:$('pNombre').value,categoria:$('pCategoria').value,precio:Number($('pPrecio').value||0),precio_original:$('pOriginal').value?Number($('pOriginal').value):null,stock:Number($('pStock').value||0),badge:$('pBadge').value||null,descripcion:$('pDescripcion').value,especificaciones:specs,activo:$('pActivo').value==='true',oferta:$('pOferta').value==='true',imagenes:finalImages,updated_at:new Date().toISOString()};
-  const res=id?await supa.from('productos').update(row).eq('id',id):await supa.from('productos').insert(row);
+
+  const res = id
+    ? await supa.from('productos').update(row).eq('id',id).select('*').single()
+    : await supa.from('productos').insert(row).select('*').single();
+
   if(res.error){ await deleteStorageUrls(imgs); return notify(res.error.message); }
+
+  const productoGuardado = res.data ? res.data : {...anterior, ...row, id:id || Date.now()};
+  const existeIndex = products.findIndex(x=>String(x.id)===String(productoGuardado.id));
+  if(existeIndex >= 0){
+    products[existeIndex] = productoGuardado;
+  }else{
+    products.unshift(productoGuardado);
+    productsTotal = Number(productsTotal || 0) + 1;
+  }
+
   const borradas=imagenesAntes.filter(u=>!finalImages.includes(u));
   await deleteStorageUrls(borradas);
   clearProductForm();
-  await loadAll();
+  renderAdminProductsTable();
+  renderProducts();
   notify('Producto guardado');
 }
 async function deleteProduct(id){
@@ -1474,7 +1489,10 @@ async function deleteProduct(id){
   const {error}=await supa.from('productos').delete().eq('id',id);
   if(error) return notify(error.message);
   await deleteStorageUrls(Array.isArray(p?.imagenes)?p.imagenes:[]);
-  await loadAll();
+  products = products.filter(x=>String(x.id)!==String(id));
+  productsTotal = Math.max(0, Number(productsTotal || 0) - 1);
+  renderAdminProductsTable();
+  renderProducts();
   notify('Producto borrado');
 }
 function clearCategoryForm(){ ['cId','cNombre','cSlug','cIcono','cDesc','cOrden'].forEach(id=>$(id).value=''); $('cImagen').value=''; categoriaImagenActual=null; renderCategoryImagePreview(); $('categoryFormTitle').textContent='Agregar categoría'; }
