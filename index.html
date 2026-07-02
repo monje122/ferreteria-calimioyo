@@ -1460,27 +1460,24 @@ async function saveProduct(){
   const imgs=(await uploadFiles('pImagenes')).slice(0,3);
   const finalImages=[...productoImagenesActuales,...imgs].filter(Boolean).slice(0,3);
   const row={nombre:$('pNombre').value,categoria:$('pCategoria').value,precio:Number($('pPrecio').value||0),precio_original:$('pOriginal').value?Number($('pOriginal').value):null,stock:Number($('pStock').value||0),badge:$('pBadge').value||null,descripcion:$('pDescripcion').value,especificaciones:specs,activo:$('pActivo').value==='true',oferta:$('pOferta').value==='true',imagenes:finalImages,updated_at:new Date().toISOString()};
-
-  const res = id
+  const res=id
     ? await supa.from('productos').update(row).eq('id',id).select('*').single()
     : await supa.from('productos').insert(row).select('*').single();
-
   if(res.error){ await deleteStorageUrls(imgs); return notify(res.error.message); }
-
-  const productoGuardado = res.data ? res.data : {...anterior, ...row, id:id || Date.now()};
-  const existeIndex = products.findIndex(x=>String(x.id)===String(productoGuardado.id));
-  if(existeIndex >= 0){
-    products[existeIndex] = productoGuardado;
-  }else{
-    products.unshift(productoGuardado);
-    productsTotal = Number(productsTotal || 0) + 1;
-  }
-
+  const guardado=res.data || {...(anterior||{}),...row,id:id||row.id};
   const borradas=imagenesAntes.filter(u=>!finalImages.includes(u));
   await deleteStorageUrls(borradas);
+
+  if(guardado && guardado.id){
+    const index=products.findIndex(x=>String(x.id)===String(guardado.id));
+    if(index>=0) products[index]={...products[index],...guardado};
+    else products.unshift(guardado);
+    productsTotal=Math.max(productsTotal, products.length);
+  }
+
   clearProductForm();
+  fillAdminSelects();
   renderAdminProductsTable();
-  renderProducts();
   notify('Producto guardado');
 }
 async function deleteProduct(id){
@@ -1489,10 +1486,11 @@ async function deleteProduct(id){
   const {error}=await supa.from('productos').delete().eq('id',id);
   if(error) return notify(error.message);
   await deleteStorageUrls(Array.isArray(p?.imagenes)?p.imagenes:[]);
-  products = products.filter(x=>String(x.id)!==String(id));
-  productsTotal = Math.max(0, Number(productsTotal || 0) - 1);
+
+  products=products.filter(x=>String(x.id)!==String(id));
+  productsTotal=Math.max(0, productsTotal-1);
+  if($('productId')?.value && String($('productId').value)===String(id)) clearProductForm();
   renderAdminProductsTable();
-  renderProducts();
   notify('Producto borrado');
 }
 function clearCategoryForm(){ ['cId','cNombre','cSlug','cIcono','cDesc','cOrden'].forEach(id=>$(id).value=''); $('cImagen').value=''; categoriaImagenActual=null; renderCategoryImagePreview(); $('categoryFormTitle').textContent='Agregar categoría'; }
@@ -1504,11 +1502,26 @@ async function saveCategory(){
   const imgs=await uploadFiles('cImagen');
   const imagenFinal=imgs[0]||categoriaImagenActual||null;
   const row={nombre:$('cNombre').value,slug:$('cSlug').value||$('cNombre').value.toLowerCase().trim().replaceAll(' ','-'),icono:$('cIcono').value||'🛠️',imagen:imagenFinal,descripcion:$('cDesc').value,orden:Number($('cOrden').value||0),activo:true};
-  const res=id?await supa.from('categorias').update(row).eq('id',id):await supa.from('categorias').insert(row);
+  const res=id
+    ? await supa.from('categorias').update(row).eq('id',id).select('*').single()
+    : await supa.from('categorias').insert(row).select('*').single();
   if(res.error){ await deleteStorageUrls(imgs); return notify(res.error.message); }
   if(imagenAntes && imagenAntes!==imagenFinal) await deleteStorageUrls(imagenAntes);
+
+  const guardada=res.data || {...(anterior||{}),...row,id:id||row.id};
+  if(guardada && guardada.id){
+    const index=categories.findIndex(x=>String(x.id)===String(guardada.id));
+    if(index>=0) categories[index]={...categories[index],...guardada};
+    else categories.push(guardada);
+    categories.sort((a,b)=>Number(a.orden||0)-Number(b.orden||0) || String(a.nombre||'').localeCompare(String(b.nombre||''),'es'));
+  }
+
   clearCategoryForm();
-  await loadAll();
+  renderNav();
+  renderCategories();
+  renderFilterTabs();
+  fillAdminSelects();
+  renderAdminTables();
   notify('Categoría guardada');
 }
 async function deleteCategory(id){
@@ -1517,7 +1530,14 @@ async function deleteCategory(id){
   const {error}=await supa.from('categorias').delete().eq('id',id);
   if(error) return notify(error.message);
   await deleteStorageUrls(c?.imagen||null);
-  await loadAll();
+
+  categories=categories.filter(x=>String(x.id)!==String(id));
+  if($('cId')?.value && String($('cId').value)===String(id)) clearCategoryForm();
+  renderNav();
+  renderCategories();
+  renderFilterTabs();
+  fillAdminSelects();
+  renderAdminTables();
   notify('Categoría borrada');
 }
 function clearPromoForm(){ ['promoId','promoTitulo','promoDesc','promoBoton','promoOrden'].forEach(id=>$(id).value=''); $('promoActivo').value='true'; $('promoImagen').value=''; promoImagenActual=null; renderPromoImagePreview(); $('promoFormTitle').textContent='Agregar promoción'; }
@@ -1529,11 +1549,23 @@ async function savePromo(){
   const imgs=await uploadFiles('promoImagen');
   const imagenFinal=imgs[0]||promoImagenActual||null;
   const row={titulo:$('promoTitulo').value,descripcion:$('promoDesc').value,boton_texto:$('promoBoton').value||'Ver promoción',orden:Number($('promoOrden').value||0),activo:$('promoActivo').value==='true',imagen:imagenFinal};
-  const res=id?await supa.from('promociones').update(row).eq('id',id):await supa.from('promociones').insert(row);
+  const res=id
+    ? await supa.from('promociones').update(row).eq('id',id).select('*').single()
+    : await supa.from('promociones').insert(row).select('*').single();
   if(res.error){ await deleteStorageUrls(imgs); return notify(res.error.message); }
   if(imagenAntes && imagenAntes!==imagenFinal) await deleteStorageUrls(imagenAntes);
+
+  const guardada=res.data || {...(anterior||{}),...row,id:id||row.id};
+  if(guardada && guardada.id){
+    const index=promos.findIndex(x=>String(x.id)===String(guardada.id));
+    if(index>=0) promos[index]={...promos[index],...guardada};
+    else promos.push(guardada);
+    promos=promos.filter(p=>p.activo!==false).sort((a,b)=>Number(a.orden||0)-Number(b.orden||0));
+  }
+
   clearPromoForm();
-  await loadAll();
+  renderPromos();
+  renderAdminTables();
   notify('Promoción guardada');
 }
 async function deletePromo(id){
@@ -1542,7 +1574,11 @@ async function deletePromo(id){
   const {error}=await supa.from('promociones').delete().eq('id',id);
   if(error) return notify(error.message);
   await deleteStorageUrls(p?.imagen||null);
-  await loadAll();
+
+  promos=promos.filter(x=>String(x.id)!==String(id));
+  if($('promoId')?.value && String($('promoId').value)===String(id)) clearPromoForm();
+  renderPromos();
+  renderAdminTables();
   notify('Promoción borrada');
 }
 function fillConfigForm(){ $('cfgNombre').value=config.nombre_tienda||''; $('cfgSlogan').value=config.slogan||''; $('cfgDesc').value=config.descripcion_hero||''; $('cfgWhatsapp').value=config.whatsapp||''; $('cfgInstagram').value=config.instagram||''; $('cfgTasa').value=config.tasa||''; $('cfgEnvio').value=config.envio_gratis_desde||''; $('cfgFooter').value=config.footer_text||''; cfgLogo1Actual=config.logo_1||null; cfgLogo2Actual=config.logo_2||null; cfgHeroActual=(Array.isArray(config.hero_imagenes)?config.hero_imagenes.filter(Boolean):[]); renderConfigPreviews(); }
@@ -1554,11 +1590,15 @@ async function saveConfig(){
   const heroFinal=hero.length?hero:cfgHeroActual;
   const finales=[logo1Final,logo2Final,...(Array.isArray(heroFinal)?heroFinal:[])].filter(Boolean);
   const row={id:1,nombre_tienda:$('cfgNombre').value,slogan:$('cfgSlogan').value,descripcion_hero:$('cfgDesc').value,whatsapp:$('cfgWhatsapp').value,instagram:$('cfgInstagram').value,tasa:Number($('cfgTasa').value||36.5),envio_gratis_desde:Number($('cfgEnvio').value||0),footer_text:$('cfgFooter').value,logo_1:logo1Final,logo_2:logo2Final,hero_imagenes:heroFinal,updated_at:new Date().toISOString()};
-  const {error}=await supa.from('tienda_config').upsert(row);
+  const {data,error}=await supa.from('tienda_config').upsert(row).select('*').single();
   if(error){ await deleteStorageUrls([...logo1,...logo2,...hero]); return notify(error.message); }
   await deleteStorageUrls(anteriores.filter(u=>!finales.includes(u)));
   ['cfgLogo1','cfgLogo2','cfgHero'].forEach(id=>$(id).value='');
-  await loadAll();
+
+  config=data || row;
+  exchangeRate=Number(config.tasa||36.5);
+  applyConfig();
+  fillConfigForm();
   notify('Configuración guardada');
 }
 function estadoBadge(estado){
